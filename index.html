@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071322">
+  <title>A1SC Fuel Lab</title>
+
+  <style>
+    :root {
+      --bg: #071322;
+      --panel: #10253b;
+      --border: #2b5274;
+      --blue: #18bdf3;
+      --pink: #ff149a;
+      --white: #ffffff;
+      --muted: #c6d4e3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .app {
+      max-width: 1080px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    button, .navlink {
+      background: #172e47;
+      border: 1px solid #345b7d;
+      border-radius: 13px;
+      color: white;
+      padding: 12px 15px;
+      font-weight: bold;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #0864df;
+      border-color: #55b8ff;
+    }
+
+    .hero {
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: linear-gradient(135deg, #102c47, #050d19);
+      padding: 24px 12px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .brand-name {
+      font-size: clamp(34px, 8vw, 78px);
+      font-weight: 900;
+      font-style: italic;
+      letter-spacing: -2px;
+      line-height: 1.1;
+    }
+
+    .wings {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      width: clamp(30px, 9vw, 100px);
+    }
+
+    .wings span {
+      height: 6px;
+      background: #087cff;
+    }
+
+    .wings span:nth-child(2) {
+      background: white;
+      width: 80%;
+    }
+
+    .wings span:nth-child(3) {
+      background: var(--pink);
+      width: 60%;
+    }
+
+    .wings.right { transform: scaleX(-1); }
+
+    .by {
+      color: var(--blue);
+      font-weight: 900;
+      font-style: italic;
+      text-align: right;
+      max-width: 690px;
+      margin: 0 auto;
+    }
+
+    .tagline {
+      font-weight: bold;
+      font-style: italic;
+      letter-spacing: 3px;
+      margin-top: 18px;
+      font-size: clamp(10px, 2.5vw, 18px);
+    }
+
+    .tagline b {
+      color: var(--pink);
+      padding: 0 8px;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: clamp(22px, 4vw, 30px);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      min-width: 0;
+      position: relative;
+      aspect-ratio: 1.25;
+      border: 1px solid #34709c;
+      border-radius: 23px;
+      overflow: hidden;
+      background: #142b42;
+      color: white;
+      text-align: left;
+      cursor: pointer;
+      padding: 0;
+      display: block;
+      text-decoration: none;
+    }
+
+    .card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .25s;
+    }
+
+    .card:hover img { transform: scale(1.04); }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        transparent 25%,
+        rgba(0, 8, 19, .94) 100%
+      );
+    }
+
+    .card-content {
+      position: absolute;
+      z-index: 1;
+      bottom: 14px;
+      left: 14px;
+      right: 10px;
+    }
+
+    .card-title {
+      display: block;
+      font-size: clamp(15px, 3vw, 28px);
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .card-desc {
+      display: block;
+      font-size: clamp(11px, 2vw, 15px);
+      color: #e0e9f4;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--blue);
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .dot.pink { background: var(--pink); }
+
+    footer {
+      color: #60bfff;
+      text-align: center;
+      font-weight: bold;
+      margin: 35px 0;
+    }
+
+    .notice {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 500px) {
+      .app { padding: 12px; }
+      .topbar { gap: 5px; justify-content: center; }
+      button, .navlink {
+        padding: 10px 11px;
+        font-size: 12px;
+      }
+      .cards { gap: 10px; }
+      .card { border-radius: 17px; aspect-ratio: 1.04; }
+      .card-content { left: 9px; bottom: 10px; }
+      .card-desc { line-height: 1.25; }
+      .hero { padding: 24px 8px; }
+      .tagline { letter-spacing: 1px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <nav class="topbar" aria-label="Main navigation">
+      <button onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        data-en="⌂ Home" data-es="⌂ Inicio">⌂ Home</button>
+
+      <button onclick="preview('meals')"
+        data-en="My Meals" data-es="Mis comidas">My Meals</button>
+
+      <button onclick="preview('profile')"
+        data-en="Profile" data-es="Perfil">Profile</button>
+
+      <button id="languageButton" onclick="toggleLanguage()">
+        ENG ▾
+      </button>
+
+      <button class="primary" onclick="preview('timer')"
+        data-en="◴ Timer" data-es="◴ Tiempo">◴ Timer</button>
+    </nav>
+
+    <header class="hero">
+      <div class="brand">
+        <div class="wings">
+          <span></span><span></span><span></span>
+        </div>
+
+        <div class="brand-name">FUEL LAB</div>
+
+        <div class="wings right">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="by">BY A1SC</div>
+
+      <div class="tagline">
+        <span data-en="NUTRITION" data-es="NUTRICIÓN">NUTRITION</span>
+        <b>/</b>
+        <span data-en="PERFORMANCE" data-es="RENDIMIENTO">PERFORMANCE</span>
+        <b>/</b>
+        <span data-en="WELLNESS" data-es="BIENESTAR">WELLNESS</span>
+      </div>
+    </header>
+
+    <h2 data-en="Your nutrition hub" data-es="Tu centro de nutrición">
+      Your nutrition hub
+    </h2>
+
+    <section class="cards" aria-label="Fuel Lab features">
+
+      <button class="card" onclick="preview('meals')">
+        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&auto=format&fit=crop"
+          alt="Colorful healthy meal">
+        <span class="card-content">
+          <span class="card-title" data-en="MY MEALS" data-es="MIS COMIDAS">MY MEALS</span>
+          <span class="card-desc">
+            <i class="dot"></i>
+            <span data-en="Daily nutrition plan" data-es="Plan diario de nutrición">Daily nutrition plan</span>
+          </span>
+        </span>
+      </button>
+
+      <button class="card" onclick="preview('week')">
+        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=900&auto=format&fit=crop"
+          alt="Prepared healthy food">
+        <span class="card-content">
+          <span class="card-title" data-en="MY WEEK" data-es="MI SEMANA">MY WEEK</span>
+          <span class="card-desc">
+            <i class="dot"></i>
+            <span data-en="Meals aligned to training" data-es="Comidas según tu entrenamiento">Meals aligned to training</span>
+          </span>
+        </span>
+      </button>
+
+      <button class="card" onclick="preview('progress')">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&auto=format&fit=crop"
+          alt="Fitness training equipment">
+        <span class="card-content">
+          <span class="card-title" data-en="MY PROGRESS" data-es="MI PROGRESO">MY PROGRESS</span>
+          <span class="card-desc">
+            <i class="dot"></i>
+            <span data-en="Nutrition, body data & trends" data-es="Nutrición, medidas y tendencias">Nutrition, body data & trends</span>
+          </span>
+        </span>
+      </button>
+
+      <a class="card"
+        href="https://jjmadridt.github.io/A1SC-TrainLab/"
+        target="_blank" rel="noopener noreferrer">
+        <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&auto=format&fit=crop"
+          alt="Endurance athlete training">
+        <span class="card-content">
+          <span class="card-title">TRAINLAB</span>
+          <span class="card-desc">
+            <i class="dot pink"></i>
+            <span data-en="Open your training app" data-es="Abrir tu app de entrenamiento">Open your training app</span>
+          </span>
+        </span>
+      </a>
+
+      <button class="card" onclick="preview('foods')">
+        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&auto=format&fit=crop"
+          alt="Selection of nutritious foods">
+        <span class="card-content">
+          <span class="card-title" data-en="FOOD LIBRARY" data-es="BIBLIOTECA DE ALIMENTOS">FOOD LIBRARY</span>
+          <span class="card-desc">
+            <i class="dot"></i>
+            <span data-en="Foods, portions & alternatives" data-es="Alimentos, porciones y opciones">Foods, portions & alternatives</span>
+          </span>
+        </span>
+      </button>
+
+      <button class="card" onclick="preview('profile')">
+        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&auto=format&fit=crop"
+          alt="Healthcare professional">
+        <span class="card-content">
+          <span class="card-title" data-en="MY PROFILE" data-es="MI PERFIL">MY PROFILE</span>
+          <span class="card-desc">
+            <i class="dot pink"></i>
+            <span data-en="Nutrition, safety & professional support"
+              data-es="Nutrición, seguridad y apoyo profesional">
+              Nutrition, safety & professional support
+            </span>
+          </span>
+        </span>
+      </button>
+
+    </section>
+
+    <p class="notice"
+      data-en="Development preview only. Personalized nutrition recommendations are not active."
+      data-es="Vista de desarrollo. Las recomendaciones nutricionales personalizadas aún no están activas.">
+      Development preview only. Personalized nutrition recommendations are not active.
+    </p>
+
+    <footer>A1SC FUEL LAB · v0.1 TEST</footer>
+  </main>
+
+  <script>
+    let language = "en";
+
+    function toggleLanguage() {
+      language = language === "en" ? "es" : "en";
+      document.documentElement.lang = language;
+
+      document.querySelectorAll("[data-en][data-es]").forEach(el => {
+        el.textContent = el.dataset[language];
+      });
+
+      document.getElementById("languageButton").textContent =
+        language === "en" ? "ENG ▾" : "ESP ▾";
+    }
+
+    function preview(feature) {
+      const messages = {
+        en: "This feature is planned for a future Fuel Lab development stage.",
+        es: "Esta función está prevista para una futura etapa de Fuel Lab."
+      };
+      alert(messages[language]);
+    }
+  </script>
+</body>
+</html>
