@@ -67,6 +67,12 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 .nutrient-result{border-left:4px solid #ff3f9c;padding:10px 13px;background:#071728;margin-top:12px;line-height:1.55}
 .nutrient-demo a{color:#81caff}
 .food-choice{text-align:left;color:#fff;cursor:pointer;width:100%;font:inherit}.food-choice:hover,.food-selected{border-color:#ff4eaa;background:#142943}.food-choice:focus-visible{outline:2px solid #ff4eaa;outline-offset:2px}
+/* v1.1.1 Mobile food catalog: keep search and category accessible while scrolling. */
+@media(max-width:600px){
+  .food-controls{position:sticky;top:0;z-index:30;background:#071525;padding:10px 8px;margin:8px -8px 12px;border:1px solid #345b7d;border-radius:12px;box-shadow:0 8px 18px rgba(0,0,0,.38);}
+  .food-controls .setup-field{margin:0;}
+  .food-controls input,.food-controls select{font-size:16px;}
+}
 /* v1.1 Meal builder */
 .meal-screen[hidden]{display:none!important}.meal-screen{max-width:850px;margin:0 auto 40px}
 .meal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.meal-screen select,.meal-screen input{width:100%;background:#071a2d;border:1px solid #477092;border-radius:10px;color:#fff;padding:11px;font-size:15px}.meal-screen label{display:block;margin:10px 0 5px;color:#d2e5f3}.meal-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.meal-actions button,.meal-remove{background:#14365a;border:1px solid #5286b1;border-radius:10px;color:white;padding:10px 14px;cursor:pointer}.meal-actions button:first-child{background:#175c9a}.meal-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0b1b2d;border:1px solid #345b7d;border-radius:10px;padding:11px;margin:8px 0}.meal-entry small{display:block;color:#aac5dc;margin-top:4px}.meal-remove{padding:7px 10px}.meal-total{margin-top:12px;border-top:1px solid #345b7d;padding-top:12px}.meal-note{font-size:13px;color:#ffc2de;line-height:1.5}.meal-summary{background:#091b2c;border:1px solid #345b7d;border-radius:12px;padding:15px;margin-top:15px}.meal-empty{color:#a9c0d4}
