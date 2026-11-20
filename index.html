@@ -16,7 +16,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 .card{min-width:0;position:relative;aspect-ratio:2.045;border:1px solid #34709c;border-radius:23px;overflow:hidden;background:#142b42;color:white;text-align:left;cursor:pointer;padding:0;display:block;text-decoration:none}.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .25s}.card:hover img{transform:scale(1.04)}.card::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 25%,rgba(0,8,19,.94) 100%)}.card-content{position:absolute;z-index:1;bottom:12px;left:14px;right:10px}.card-title{display:block;font-size:clamp(13px,2.35vw,26px);font-weight:900;margin-bottom:5px}.card-desc{display:block;font-size:clamp(10px,1.35vw,14px);color:#e0e9f4}.dot{display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:50%;margin-right:5px}.dot.pink{background:var(--pink)}footer{color:#60bfff;text-align:center;font-weight:bold;margin:35px 0}.notice{margin-top:20px;color:var(--muted);font-size:13px;text-align:center}
 @media(max-width:500px){.app{padding:12px}.topbar{gap:5px;justify-content:center}button,.navlink{padding:10px 11px;font-size:12px}.cards{gap:10px}.card{border-radius:17px;aspect-ratio:1.78}.card-content{left:9px;bottom:9px}.card-title{font-size:clamp(12px,3.7vw,20px)}.card-desc{font-size:clamp(9px,2.5vw,12px)}.dot{width:8px;height:8px}.card-desc{line-height:1.25}.hero img{border-radius:15px}.tagline{letter-spacing:1px}}
 
-/* v0.7 Profile preview: no personal information is collected or saved. */
+/* v0.8 Profile preview: no personal information is collected or saved. */
 .profile-screen[hidden],.home-screen[hidden]{display:none!important}
 .profile-screen{max-width:850px;margin:0 auto 40px}
 .profile-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 18px}
@@ -49,6 +49,16 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 .review-banner{border-left:4px solid #18bdf3;background:#081b2d;padding:13px 15px;margin-top:12px;line-height:1.5;white-space:pre-line}
 .review-warning{color:#ffbadf;font-size:12px;line-height:1.5;margin-top:12px}
 @media(max-width:500px){.review-record{grid-template-columns:1fr}}
+
+/* v0.8 Food Library — reference structure only; no unverified nutrient numbers. */
+.food-screen[hidden]{display:none!important}.food-screen{max-width:850px;margin:0 auto 40px}
+.food-controls{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin:14px 0}
+.food-controls input,.food-controls select{width:100%;background:#071a2d;border:1px solid #477092;border-radius:11px;color:white;padding:12px;font-size:15px}
+.food-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.food-item{background:#0b1b2d;border:1px solid #345b7d;border-radius:12px;padding:14px;line-height:1.45}
+.food-item strong{display:block;font-size:16px}.food-item small{display:block;color:#aac5dc;margin:5px 0}
+.food-item p{margin:6px 0 0!important;font-size:13px}.food-empty{grid-column:1/-1;color:#c6d4e3}
+@media(max-width:500px){.food-controls,.food-results{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -132,15 +142,25 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <p class="review-warning" data-en="A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records." data-es="La revisión corresponde a una versión específica del plan y a condiciones definidas, no a una persona permanentemente. Los cambios pueden requerir nueva evaluación. La aprobación real requerirá revisión profesional autenticada y registros de auditoría seguros.">A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records.</p>
 </div>
 <div class="profile-panel"><h3 data-en="TrainLab connection" data-es="Conexión con TrainLab">TrainLab connection</h3><p data-en="Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review." data-es="Más adelante podrás importar tu programa de entrenamiento o ingresar actividades manualmente. Conectar datos de entrenamiento no omitirá la revisión de seguridad nutricional.">Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review.</p><a class="navlink" href="https://jjmadridt.github.io/A1SC-TrainLab/" target="_blank" rel="noopener noreferrer" data-en="Open TrainLab ↗" data-es="Abrir TrainLab ↗">Open TrainLab ↗</a></div>
-<p class="profile-muted" data-en="Fuel Lab v0.7 · Interface prototype. No accounts, health records or nutrition calculations." data-es="Fuel Lab v0.7 · Prototipo de interfaz. Sin cuentas, expedientes de salud ni cálculos nutricionales.">Fuel Lab v0.7 · Interface prototype. No accounts, health records or nutrition calculations.</p>
+<p class="profile-muted" data-en="Fuel Lab v0.8 · Interface prototype. No accounts, health records or nutrition calculations." data-es="Fuel Lab v0.8 · Prototipo de interfaz. Sin cuentas, expedientes de salud ni cálculos nutricionales.">Fuel Lab v0.8 · Interface prototype. No accounts, health records or nutrition calculations.</p>
 </section>
-<footer>A1SC FUEL LAB · v0.7 TEST</footer>
+<section id="foodScreen" class="food-screen" hidden>
+<div class="profile-head"><h2 data-en="Food Library" data-es="Biblioteca de alimentos">Food Library</h2><button onclick="showHome()" data-en="← Back home" data-es="← Volver al inicio">← Back home</button></div>
+<div class="profile-panel">
+<h3 data-en="Food reference catalog · Demo" data-es="Catálogo de referencia · Demo">Food reference catalog · Demo</h3>
+<p data-en="Browse sample foods and serving descriptions. Nutrient quantities are intentionally unavailable until a verified food composition database and serving conversion rules are integrated." data-es="Explora alimentos de ejemplo y descripciones de porciones. Las cantidades de nutrientes no están disponibles hasta integrar una base de composición verificada y reglas de conversión de porciones.">Browse sample foods and serving descriptions. Nutrient quantities are intentionally unavailable until a verified food composition database and serving conversion rules are integrated.</p>
+<div class="profile-status" data-en="DEMO ONLY · No calories, macros, allergy clearance, meal recommendations, or medical advice. Serving descriptions are illustrative, not standardized." data-es="SOLO DEMO · Sin calorías, macronutrientes, autorización sobre alergias, recomendaciones de comidas ni consejos médicos. Las porciones son ilustrativas, no estandarizadas.">DEMO ONLY · No calories, macros, allergy clearance, meal recommendations, or medical advice. Serving descriptions are illustrative, not standardized.</div>
+<div class="food-controls"><label class="setup-field"><span data-en="Search foods" data-es="Buscar alimentos">Search foods</span><input id="foodSearch" type="search" oninput="renderFoods()" placeholder="Search / Buscar" autocomplete="off"></label><label class="setup-field"><span data-en="Category" data-es="Categoría">Category</span><select id="foodCategory" onchange="renderFoods()"><option value="all" data-en="All categories" data-es="Todas las categorías">All categories</option><option value="fruit" data-en="Fruit" data-es="Frutas">Fruit</option><option value="vegetable" data-en="Vegetables" data-es="Verduras">Vegetables</option><option value="grain" data-en="Grains" data-es="Cereales">Grains</option><option value="protein" data-en="Protein foods" data-es="Alimentos proteicos">Protein foods</option><option value="dairy" data-en="Dairy and alternatives" data-es="Lácteos y alternativas">Dairy and alternatives</option><option value="fat" data-en="Fats and oils" data-es="Grasas y aceites">Fats and oils</option></select></label></div>
+<p id="foodCount" class="profile-muted" aria-live="polite"></p><div id="foodResults" class="food-results"></div>
+<p class="profile-muted" data-en="Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here." data-es="Los datos futuros de producción deberán incluir fuente identificada, código del alimento, porción comestible, unidades, nutrientes, versión/fecha y revisión de alérgenos cuando corresponda. Aquí no se guardan datos personales.">Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here.</p>
+</div></section>
+<footer>A1SC FUEL LAB · v0.8 TEST</footer>
 </main>
 <script>
 let language="en";
-function toggleLanguage(){language=language==="en"?"es":"en";document.documentElement.lang=language;document.querySelectorAll("[data-en][data-es]").forEach(el=>{el.textContent=el.dataset[language]});document.getElementById("languageButton").textContent=language==="en"?"ENG ▾":"ESP ▾"}
-function showHome(){document.getElementById("profileScreen").hidden=true;document.getElementById("homeScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
-function showProfile(){document.getElementById("homeScreen").hidden=true;document.getElementById("profileScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
+function toggleLanguage(){language=language==="en"?"es":"en";document.documentElement.lang=language;document.querySelectorAll("[data-en][data-es]").forEach(el=>{el.textContent=el.dataset[language]});document.getElementById("languageButton").textContent=language==="en"?"ENG ▾":"ESP ▾";renderFoods()}
+function showHome(){document.getElementById("profileScreen").hidden=true;document.getElementById("foodScreen").hidden=true;document.getElementById("homeScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
+function showProfile(){document.getElementById("foodScreen").hidden=true;document.getElementById("homeScreen").hidden=true;document.getElementById("profileScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
 document.querySelectorAll("[data-goal]").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll("[data-goal]").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));const status=document.getElementById("goalStatus");const msg={en:"Sample goal selected. A real plan would still require completed safety screening and validated nutrition rules.",es:"Objetivo de ejemplo seleccionado. Un plan real aún requeriría completar la evaluación de seguridad y contar con reglas nutricionales validadas."};status.textContent=msg[language];status.dataset.en=msg.en;status.dataset.es=msg.es}));
 function reviewDemo(){
  const ids=["focusSelect","activitySelect","mealsSelect","foodSelect"];
@@ -186,7 +206,25 @@ function renderReviewDemo(){
  record.hidden=false;
 }
 
-function preview(feature){if(feature==="profile"){showProfile();return}alert(language==="en"?"This feature is planned for a future Fuel Lab development stage.":"Esta función está prevista para una futura etapa de Fuel Lab.")}
+
+const demoFoods=[
+{id:'banana',cat:'fruit',en:'Banana',es:'Plátano',serveEn:'Example: one whole fruit',serveEs:'Ejemplo: una fruta entera'},
+{id:'apple',cat:'fruit',en:'Apple',es:'Manzana',serveEn:'Example: one whole fruit',serveEs:'Ejemplo: una fruta entera'},
+{id:'spinach',cat:'vegetable',en:'Spinach',es:'Espinaca',serveEn:'Example: raw leaves',serveEs:'Ejemplo: hojas crudas'},
+{id:'broccoli',cat:'vegetable',en:'Broccoli',es:'Brócoli',serveEn:'Example: cooked florets',serveEs:'Ejemplo: floretes cocidos'},
+{id:'oats',cat:'grain',en:'Oats',es:'Avena',serveEn:'Example: dry oats',serveEs:'Ejemplo: avena seca'},
+{id:'rice',cat:'grain',en:'Brown rice',es:'Arroz integral',serveEn:'Example: cooked rice',serveEs:'Ejemplo: arroz cocido'},
+{id:'egg',cat:'protein',en:'Egg',es:'Huevo',serveEn:'Example: one cooked egg',serveEs:'Ejemplo: un huevo cocido'},
+{id:'beans',cat:'protein',en:'Black beans',es:'Frijoles negros',serveEn:'Example: cooked beans',serveEs:'Ejemplo: frijoles cocidos'},
+{id:'yogurt',cat:'dairy',en:'Plain yogurt',es:'Yogur natural',serveEn:'Example: unsweetened yogurt',serveEs:'Ejemplo: yogur sin azúcar'},
+{id:'milk',cat:'dairy',en:'Milk',es:'Leche',serveEn:'Example: plain milk',serveEs:'Ejemplo: leche natural'},
+{id:'olive',cat:'fat',en:'Olive oil',es:'Aceite de oliva',serveEn:'Example: measured oil',serveEs:'Ejemplo: aceite medido'},
+{id:'avocado',cat:'fat',en:'Avocado',es:'Aguacate',serveEn:'Example: fresh avocado',serveEs:'Ejemplo: aguacate fresco'}
+];
+function showFoods(){document.getElementById('homeScreen').hidden=true;document.getElementById('profileScreen').hidden=true;document.getElementById('foodScreen').hidden=false;renderFoods();window.scrollTo({top:0,behavior:'smooth'})}
+function renderFoods(){const list=document.getElementById('foodResults');if(!list)return;const term=document.getElementById('foodSearch').value.trim().toLocaleLowerCase();const cat=document.getElementById('foodCategory').value;const filtered=demoFoods.filter(f=>(cat==='all'||f.cat===cat)&&(!term||[f.en,f.es,f.id].some(x=>x.toLocaleLowerCase().includes(term))));list.replaceChildren();const count=document.getElementById('foodCount');count.textContent=language==='en'?`${filtered.length} sample foods · No verified nutrient values`:`${filtered.length} alimentos de ejemplo · Sin nutrientes verificados`;for(const f of filtered){const item=document.createElement('article');item.className='food-item';const title=document.createElement('strong');title.textContent=language==='en'?f.en:f.es;const detail=document.createElement('small');detail.textContent=language==='en'?f.serveEn:f.serveEs;const status=document.createElement('p');status.textContent=language==='en'?'Nutrient data: awaiting verified source':'Datos nutricionales: pendiente de fuente verificada';item.append(title,detail,status);list.append(item)}if(!filtered.length){const empty=document.createElement('p');empty.className='food-empty';empty.textContent=language==='en'?'No matching sample foods.':'No hay alimentos de ejemplo que coincidan.';list.append(empty)}}
+
+function preview(feature){if(feature==="foods"){showFoods();return}if(feature==="profile"){showProfile();return}alert(language==="en"?"This feature is planned for a future Fuel Lab development stage.":"Esta función está prevista para una futura etapa de Fuel Lab.")}
 </script>
 </body>
 </html>
