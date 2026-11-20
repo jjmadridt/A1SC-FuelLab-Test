@@ -16,7 +16,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 .card{min-width:0;position:relative;aspect-ratio:2.045;border:1px solid #34709c;border-radius:23px;overflow:hidden;background:#142b42;color:white;text-align:left;cursor:pointer;padding:0;display:block;text-decoration:none}.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .25s}.card:hover img{transform:scale(1.04)}.card::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 25%,rgba(0,8,19,.94) 100%)}.card-content{position:absolute;z-index:1;bottom:12px;left:14px;right:10px}.card-title{display:block;font-size:clamp(13px,2.35vw,26px);font-weight:900;margin-bottom:5px}.card-desc{display:block;font-size:clamp(10px,1.35vw,14px);color:#e0e9f4}.dot{display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:50%;margin-right:5px}.dot.pink{background:var(--pink)}footer{color:#60bfff;text-align:center;font-weight:bold;margin:35px 0}.notice{margin-top:20px;color:var(--muted);font-size:13px;text-align:center}
 @media(max-width:500px){.app{padding:12px}.topbar{gap:5px;justify-content:center}button,.navlink{padding:10px 11px;font-size:12px}.cards{gap:10px}.card{border-radius:17px;aspect-ratio:1.78}.card-content{left:9px;bottom:9px}.card-title{font-size:clamp(12px,3.7vw,20px)}.card-desc{font-size:clamp(9px,2.5vw,12px)}.dot{width:8px;height:8px}.card-desc{line-height:1.25}.hero img{border-radius:15px}.tagline{letter-spacing:1px}}
 
-/* v0.6 Profile preview: no personal information is collected or saved. */
+/* v0.7 Profile preview: no personal information is collected or saved. */
 .profile-screen[hidden],.home-screen[hidden]{display:none!important}
 .profile-screen{max-width:850px;margin:0 auto 40px}
 .profile-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 18px}
@@ -40,6 +40,15 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 .setup-field select{width:100%;background:#071a2d;border:1px solid #477092;border-radius:11px;color:#fff;padding:12px;font-size:15px}
 .setup-summary{white-space:pre-line;margin-top:12px}
 @media(max-width:500px){.setup-grid{grid-template-columns:1fr}}
+
+/* v0.7 Professional review preview — fictional records only. */
+.review-record{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.review-field{background:#0b1b2d;border:1px solid #345b7d;border-radius:12px;padding:12px;min-width:0}
+.review-field small{display:block;color:#a9c0d4;margin-bottom:5px;font-size:12px}
+.review-field strong{display:block;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.review-banner{border-left:4px solid #18bdf3;background:#081b2d;padding:13px 15px;margin-top:12px;line-height:1.5;white-space:pre-line}
+.review-warning{color:#ffbadf;font-size:12px;line-height:1.5;margin-top:12px}
+@media(max-width:500px){.review-record{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -101,10 +110,31 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <div class="profile-status safety-result" id="safetyResult" role="status" aria-live="polite" data-en="No fictional scenario selected. Nutrition recommendations remain disabled." data-es="No se ha seleccionado un caso ficticio. Las recomendaciones nutricionales siguen desactivadas.">No fictional scenario selected. Nutrition recommendations remain disabled.</div>
 <p class="profile-muted" data-en="These illustrative pathways are NOT clinically validated. Physicians and qualified nutrition professionals must review screening questions, thresholds and escalation rules before real use." data-es="Estas rutas ilustrativas NO están validadas clínicamente. Médicos y profesionales de nutrición calificados deben revisar las preguntas, criterios y reglas de derivación antes del uso real.">These illustrative pathways are NOT clinically validated. Physicians and qualified nutrition professionals must review screening questions, thresholds and escalation rules before real use.</p>
 </div>
+
+<div class="profile-panel" id="professionalReviewDemo">
+<h3 data-en="Professional review · Demo" data-es="Revisión profesional · Demostración">Professional review · Demo</h3>
+<p data-en="Explore how a specific nutrition plan version could be reviewed. These are fictional records only; no actual approval is issued." data-es="Explora cómo podría revisarse una versión específica de un plan nutricional. Son registros ficticios; no se emite ninguna aprobación real.">Explore how a specific nutrition plan version could be reviewed. These are fictional records only; no actual approval is issued.</p>
+<div class="safety-demo-note" data-en="TEST MODE ONLY · The review status below is fictional. No real professional has reviewed or approved a plan." data-es="SOLO MODO DE PRUEBA · El estado siguiente es ficticio. Ningún profesional ha revisado ni aprobado un plan real.">TEST MODE ONLY · The review status below is fictional. No real professional has reviewed or approved a plan.</div>
+<label for="reviewScenario" data-en="Choose a fictional review record" data-es="Elige un registro ficticio de revisión">Choose a fictional review record</label>
+<select class="safety-select" id="reviewScenario" onchange="renderReviewDemo()">
+<option value="" data-en="Select an example" data-es="Selecciona un ejemplo">Select an example</option>
+<option value="pending" data-en="Example 1 · Pending review" data-es="Ejemplo 1 · Pendiente de revisión">Example 1 · Pending review</option>
+<option value="approved" data-en="Example 2 · Reviewed plan version" data-es="Ejemplo 2 · Versión de plan revisada">Example 2 · Reviewed plan version</option>
+<option value="more" data-en="Example 3 · More information required" data-es="Ejemplo 3 · Se requiere más información">Example 3 · More information required</option>
+</select>
+<div class="review-banner" id="reviewBanner" role="status" aria-live="polite" data-en="No example selected. Personalized recommendations remain disabled." data-es="No se ha seleccionado un ejemplo. Las recomendaciones personalizadas siguen desactivadas.">No example selected. Personalized recommendations remain disabled.</div>
+<div class="review-record" id="reviewRecord" hidden>
+<div class="review-field"><small data-en="Plan version" data-es="Versión del plan">Plan version</small><strong id="reviewPlan">—</strong></div>
+<div class="review-field"><small data-en="Professional role" data-es="Función profesional">Professional role</small><strong id="reviewRole">—</strong></div>
+<div class="review-field"><small data-en="Review date" data-es="Fecha de revisión">Review date</small><strong id="reviewDate">—</strong></div>
+<div class="review-field"><small data-en="Review scope" data-es="Alcance de la revisión">Review scope</small><strong id="reviewScope">—</strong></div>
+</div>
+<p class="review-warning" data-en="A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records." data-es="La revisión corresponde a una versión específica del plan y a condiciones definidas, no a una persona permanentemente. Los cambios pueden requerir nueva evaluación. La aprobación real requerirá revisión profesional autenticada y registros de auditoría seguros.">A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records.</p>
+</div>
 <div class="profile-panel"><h3 data-en="TrainLab connection" data-es="Conexión con TrainLab">TrainLab connection</h3><p data-en="Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review." data-es="Más adelante podrás importar tu programa de entrenamiento o ingresar actividades manualmente. Conectar datos de entrenamiento no omitirá la revisión de seguridad nutricional.">Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review.</p><a class="navlink" href="https://jjmadridt.github.io/A1SC-TrainLab/" target="_blank" rel="noopener noreferrer" data-en="Open TrainLab ↗" data-es="Abrir TrainLab ↗">Open TrainLab ↗</a></div>
-<p class="profile-muted" data-en="Fuel Lab v0.6 · Interface prototype. No accounts, health records or nutrition calculations." data-es="Fuel Lab v0.6 · Prototipo de interfaz. Sin cuentas, expedientes de salud ni cálculos nutricionales.">Fuel Lab v0.6 · Interface prototype. No accounts, health records or nutrition calculations.</p>
+<p class="profile-muted" data-en="Fuel Lab v0.7 · Interface prototype. No accounts, health records or nutrition calculations." data-es="Fuel Lab v0.7 · Prototipo de interfaz. Sin cuentas, expedientes de salud ni cálculos nutricionales.">Fuel Lab v0.7 · Interface prototype. No accounts, health records or nutrition calculations.</p>
 </section>
-<footer>A1SC FUEL LAB · v0.6 TEST</footer>
+<footer>A1SC FUEL LAB · v0.7 TEST</footer>
 </main>
 <script>
 let language="en";
@@ -138,6 +168,24 @@ function reviewSafetyDemo(){
  setSafetyResult(choice[0]+"\n\nDEMO ONLY — No health information saved; no recommendations or medical clearance.",choice[1]+"\n\nSOLO DEMO — No se guardan datos de salud ni se generan recomendaciones o autorizaciones médicas.")
 }
 function clearSafetyDemo(){document.getElementById("safetyScenario").value="";setSafetyResult("No fictional scenario selected. Nutrition recommendations remain disabled.","No se ha seleccionado un caso ficticio. Las recomendaciones nutricionales siguen desactivadas.")}
+
+const fictionalReviews={
+ pending:{en:["PENDING REVIEW — Example only. No nutrition plan may be treated as approved.","Draft v1.0","Qualified nutrition professional (not assigned)","Not reviewed","Nutrition adequacy and substitutions"],es:["PENDIENTE DE REVISIÓN — Solo ejemplo. Ningún plan puede considerarse aprobado.","Borrador v1.0","Profesional de nutrición calificado (sin asignar)","Sin revisar","Adecuación nutricional y sustituciones"]},
+ approved:{en:["REVIEWED PLAN VERSION — FICTIONAL EXAMPLE ONLY. Not a real medical or nutritional approval.","Sample plan v1.2","Qualified nutrition professional (fictional)","Example: 2026-11-01","Only sample plan v1.2 under fictional stated conditions"],es:["VERSIÓN DE PLAN REVISADA — SOLO EJEMPLO FICTICIO. No es una aprobación médica ni nutricional real.","Plan de ejemplo v1.2","Profesional de nutrición calificado (ficticio)","Ejemplo: 2026-11-01","Solo plan de ejemplo v1.2 bajo condiciones ficticias definidas"]},
+ more:{en:["ADDITIONAL INFORMATION REQUIRED — Example only. Hold recommendations until the review is resolved.","Draft v1.3","Physician and nutrition professional (not assigned)","Not reviewed","Clarify relevant clinical restrictions before plan review"],es:["SE REQUIERE MÁS INFORMACIÓN — Solo ejemplo. No recomendar hasta resolver la revisión.","Borrador v1.3","Médico y profesional de nutrición (sin asignar)","Sin revisar","Aclarar restricciones clínicas antes de revisar el plan"]}
+};
+function renderReviewDemo(){
+ const value=document.getElementById("reviewScenario").value;
+ const record=document.getElementById("reviewRecord");
+ const banner=document.getElementById("reviewBanner");
+ const example=fictionalReviews[value];
+ if(!example){record.hidden=true;banner.dataset.en="No example selected. Personalized recommendations remain disabled.";banner.dataset.es="No se ha seleccionado un ejemplo. Las recomendaciones personalizadas siguen desactivadas.";banner.textContent=banner.dataset[language];return}
+ const en=example.en,es=example.es,display=example[language];
+ banner.dataset.en=en[0];banner.dataset.es=es[0];banner.textContent=display[0];
+ ["reviewPlan","reviewRole","reviewDate","reviewScope"].forEach((id,i)=>{const el=document.getElementById(id);el.dataset.en=en[i+1];el.dataset.es=es[i+1];el.textContent=display[i+1]});
+ record.hidden=false;
+}
+
 function preview(feature){if(feature==="profile"){showProfile();return}alert(language==="en"?"This feature is planned for a future Fuel Lab development stage.":"Esta función está prevista para una futura etapa de Fuel Lab.")}
 </script>
 </body>
