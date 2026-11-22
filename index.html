@@ -343,6 +343,41 @@ checkSharedWeek();
 
 function preview(feature){if(feature==="week"){showWeek();return}if(feature==="meals"){showMeals();return}if(feature==="foods"){showFoods();return}if(feature==="profile"){showProfile();return}alert(language==="en"?"This feature is planned for a future Fuel Lab development stage.":"Esta función está prevista para una futura etapa de Fuel Lab.")}
 </script>
-<script>if ("serviceWorker" in navigator) {window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
+<style>
+#fuelUpdateBanner{position:fixed;z-index:9999;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:580px;margin:auto;background:#10253b;border:1px solid #18bdf3;border-radius:16px;padding:14px;box-shadow:0 8px 28px #0009;color:#fff}
+#fuelUpdateBanner[hidden]{display:none!important}
+#fuelUpdateBanner .fuel-update-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+#fuelUpdateBanner p{margin:5px 0;color:#c6d4e3;font-size:13px}
+</style>
+<div id="fuelUpdateBanner" hidden role="status" aria-live="polite">
+<strong id="fuelUpdateTitle">Fuel Lab update available</strong>
+<p id="fuelUpdateDescription">A newer version is ready.</p>
+<div class="fuel-update-actions"><button type="button" class="primary" id="fuelUpdateNow">Update now</button><button type="button" id="fuelUpdateLater">Later</button></div>
+</div>
+<script>
+(function(){
+ if(!('serviceWorker' in navigator))return;
+ const banner=document.getElementById('fuelUpdateBanner');
+ const title=document.getElementById('fuelUpdateTitle');
+ const description=document.getElementById('fuelUpdateDescription');
+ const now=document.getElementById('fuelUpdateNow');
+ const later=document.getElementById('fuelUpdateLater');
+ let waiting=null, deferred=false, updating=false;
+ function translated(){const es=document.documentElement.lang==='es'||(typeof language!=='undefined'&&language==='es');title.textContent=es?'Actualización de Fuel Lab disponible':'Fuel Lab update available';description.textContent=es?'Hay una versión nueva lista.':'A newer version is ready.';now.textContent=es?'Actualizar ahora':'Update now';later.textContent=es?'Más tarde':'Later';}
+ function offer(worker){if(!worker||updating)return;waiting=worker;if(!deferred){translated();banner.hidden=false;}}
+ now.addEventListener('click',()=>{if(!waiting)return;updating=true;now.disabled=true;now.textContent='Updating…';waiting.postMessage({type:'SKIP_WAITING'});});
+ later.addEventListener('click',()=>{deferred=true;banner.hidden=true;});
+ let hadController=!!navigator.serviceWorker.controller;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(updating&&hadController)location.reload();hadController=true;});
+ function track(reg){if(reg.waiting&&navigator.serviceWorker.controller)offer(reg.waiting);
+ reg.addEventListener('updatefound',()=>{const worker=reg.installing;if(!worker)return;worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)offer(worker);});});
+ const check=()=>{if(document.visibilityState==='visible')reg.update().catch(()=>{});};
+ document.addEventListener('visibilitychange',check);
+ window.addEventListener('focus',check);
+ setInterval(check,60*60*1000);
+ }
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').then(track).catch(()=>{}));
+})();
+</script>
 </body>
 </html>
