@@ -560,7 +560,7 @@ checkSharedWeek();
 
 // Integration v1: validated local snapshot, separate from existing meal data.
 (function(){
- const KEY='a1sc.fuellab.training-summary.v1', ORIGIN='https://jjmadridt.github.io', PATH='/A1SC-TrainLab-Test/', PROTOCOL='a1sc.trainlab-fuellab';
+ const KEY='a1sc.fuellab.training-summary.v1', ORIGIN='https://6f24e24c.a1sc-trainlab.pages.dev', PROTOCOL='a1sc.trainlab-fuellab';
  const tr=(en,es)=>language==='es'?es:en;
  const disciplines=['strength','cycle','run','swim','triathlon'], intensities=['easy','moderate','hard','unknown'];
  function date(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))throw Error('date');const d=new Date(v+'T00:00:00Z');if(!Number.isFinite(+d)||d.toISOString().slice(0,10)!==v)throw Error('date');return d;}
@@ -576,12 +576,26 @@ checkSharedWeek();
  function render(){panel.replaceChildren();const p=pending||saved;if(!p)return;const h=document.createElement('h3');h.textContent= pending?tr('Training schedule received — confirm','Programa recibido — confirmar'):tr('Saved TrainLab schedule','Programa de TrainLab guardado');panel.append(h);const info=document.createElement('p');info.textContent=p.weekStart+' · '+p.timezone;panel.append(info);for(const day of p.days){const row=document.createElement('p');row.textContent=day.date+' — '+(day.sessions.map(x=>x.discipline+' · '+(x.plannedMinutes===null?tr('duration unknown','duración desconocida'):x.plannedMinutes+' min')+' · '+x.intensity).join('; ')||tr('No planned sessions','Sin sesiones previstas'));panel.append(row);}if(pending){const yes=document.createElement('button'),no=document.createElement('button');yes.textContent=tr('Confirm and save','Confirmar y guardar');no.textContent=tr('Cancel','Cancelar');yes.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(pending));saved=pending;pending=null;render();}catch(_){alert(tr('Unable to save. Previous schedule preserved.','No se pudo guardar. Programa anterior conservado.'));}};no.onclick=()=>{pending=null;render();};const controls=document.createElement('div');controls.className='week-buttons';controls.append(yes,no);panel.append(controls);} }
  render();const hash=location.hash;if(!hash.startsWith('#tlhandoff='))return;
  const token=hash.slice(11);history.replaceState(null,'',location.pathname+location.search);const sender=window.opener;
- function trusted(){try{return !!sender&&sender.location.origin===ORIGIN&&sender.location.pathname===PATH;}catch(_){return false;}}
- if(!/^[a-f0-9]{32}$/.test(token)||!trusted()){alert(tr('Training connection unavailable. No data changed.','Conexión no disponible. No se cambiaron datos.'));return;}
- let done=false,timer;function send(type){sender.postMessage({protocol:PROTOCOL,version:1,type,token},ORIGIN);}
+ const diagnostic=(en,es)=>alert(tr(en+' No data changed.',es+' No se cambiaron datos.'));
+ if(!sender||sender.closed){diagnostic('Training connection: missing opener.','Conexión: falta la ventana de origen.');return;}
+ if(!/^[a-f0-9]{32}$/.test(token)){diagnostic('Training connection: invalid token.','Conexión: token inválido.');return;}
+ let done=false,timer;
+ function send(type){sender.postMessage({protocol:PROTOCOL,version:1,type,token},ORIGIN);}
  function cleanup(){done=true;clearTimeout(timer);window.removeEventListener('message',receive);}
- function receive(e){if(done||e.source!==sender||e.origin!==ORIGIN||!trusted())return;const m=e.data;if(!m||m.protocol!==PROTOCOL||m.version!==1||m.token!==token||m.type!=='SUMMARY')return;try{pending=validate(m.payload);showWeek();render();panel.scrollIntoView({block:'start'});send('RECEIVED');cleanup();}catch(_){pending=null;render();try{send('ERROR');}finally{cleanup();}alert(tr('Invalid training summary. No data changed.','Programa inválido. No se cambiaron datos.'));}}
- window.addEventListener('message',receive);timer=setTimeout(()=>{cleanup();alert(tr('Training transfer timed out. No data changed.','Transferencia agotada. No se cambiaron datos.'));},30000);send('READY');
+ function fail(en,es,notify=false){cleanup();if(notify){try{send('ERROR');}catch(_){}}diagnostic(en,es);}
+ function receive(e){
+  if(done||e.source!==sender||e.source!==window.opener)return;
+  if(e.origin!==ORIGIN){fail('Training connection: unapproved origin.','Conexión: origen no autorizado.');return;}
+  const m=e.data;
+  if(!m||m.protocol!==PROTOCOL||m.version!==1||m.type!=='SUMMARY')return;
+  if(m.token!==token){fail('Training connection: invalid token.','Conexión: token inválido.',true);return;}
+  try{pending=validate(m.payload);showWeek();render();panel.scrollIntoView({block:'start'});send('RECEIVED');cleanup();}
+  catch(_){pending=null;render();fail('Invalid training summary.','Programa inválido.',true);}
+ }
+ window.addEventListener('message',receive);
+ timer=setTimeout(()=>fail('Training transfer timed out. Verify the approved sender origin and browser connection.','Transferencia agotada. Verifica el origen autorizado y la conexión.',true),30000);
+ try{send('READY');}catch(_){fail('Training connection: unable to contact opener.','Conexión: no se pudo contactar la ventana de origen.');}
+
 })();
 
 
