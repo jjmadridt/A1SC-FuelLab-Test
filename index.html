@@ -558,6 +558,33 @@ function decodeWeek(encoded){if(!/^[A-Za-z0-9_-]{1,12000}$/.test(encoded))return
 function checkSharedWeek(){const hash=location.hash;if(!hash.startsWith('#fuelweek='))return;let plan=null;try{plan=decodeWeek(hash.slice(10))}catch(e){}history.replaceState(null,'',location.pathname+location.search);if(!plan){alert(language==='en'?'This meal-plan link is invalid or incompatible.':'El enlace del plan es inválido o incompatible.');return}const count=plan.flat().length;if(confirm((language==='en'?'Import shared 7-day plan with ':'¿Importar plan compartido de 7 días con ')+count+(language==='en'?' foods? This replaces your saved weekly plan, not your Meal Builder. Preliminary nutrition data only.':' alimentos? Reemplaza tu plan semanal guardado, no Meal Builder. Datos nutricionales preliminares.'))){weekPlan=plan;saveWeek();showWeek();weekMessage('Shared plan imported to this device.','Plan compartido importado en este dispositivo.')}}
 checkSharedWeek();
 
+// Integration v1: validated local snapshot, separate from existing meal data.
+(function(){
+ const KEY='a1sc.fuellab.training-summary.v1', ORIGIN='https://jjmadridt.github.io', PATH='/A1SC-TrainLab-Test/', PROTOCOL='a1sc.trainlab-fuellab';
+ const tr=(en,es)=>language==='es'?es:en;
+ const disciplines=['strength','cycle','run','swim','triathlon'], intensities=['easy','moderate','hard','unknown'];
+ function date(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))throw Error('date');const d=new Date(v+'T00:00:00Z');if(!Number.isFinite(+d)||d.toISOString().slice(0,10)!==v)throw Error('date');return d;}
+ function minutes(v){return v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1440);}
+ function validate(p){
+  if(!p||p.schema!=='a1sc.training-summary'||p.version!==1||p.source!=='trainlab'||typeof p.timezone!=='string'||p.timezone.length>100||!Array.isArray(p.days)||p.days.length!==7)throw Error('schema');
+  new Intl.DateTimeFormat('en',{timeZone:p.timezone});const start=date(p.weekStart);if(start.getUTCDay()!==1)throw Error('week');
+  const days=p.days.map((day,i)=>{const expected=new Date(+start+i*86400000).toISOString().slice(0,10);if(!day||day.date!==expected||!Array.isArray(day.sessions)||day.sessions.length>100)throw Error('day');return {date:expected,sessions:day.sessions.map(x=>{if(!x||!disciplines.includes(x.discipline)||!minutes(x.plannedMinutes)||!intensities.includes(x.intensity))throw Error('session');const y={discipline:x.discipline,plannedMinutes:x.plannedMinutes,intensity:x.intensity};if(x.completed!==undefined){if(!x.completed||!minutes(x.completed.durationMinutes)||!intensities.includes(x.completed.intensity))throw Error('completed');y.completed={durationMinutes:x.completed.durationMinutes,intensity:x.completed.intensity};}return y;})};});
+  return {schema:p.schema,version:1,source:p.source,weekStart:p.weekStart,timezone:p.timezone,days};
+ }
+ const panel=document.createElement('div');panel.className='profile-panel';document.getElementById('trainingPlannerPreview').before(panel);
+ let saved=null,pending=null;try{saved=validate(JSON.parse(localStorage.getItem(KEY)));}catch(_){}
+ function render(){panel.replaceChildren();const p=pending||saved;if(!p)return;const h=document.createElement('h3');h.textContent= pending?tr('Training schedule received — confirm','Programa recibido — confirmar'):tr('Saved TrainLab schedule','Programa de TrainLab guardado');panel.append(h);const info=document.createElement('p');info.textContent=p.weekStart+' · '+p.timezone;panel.append(info);for(const day of p.days){const row=document.createElement('p');row.textContent=day.date+' — '+(day.sessions.map(x=>x.discipline+' · '+(x.plannedMinutes===null?tr('duration unknown','duración desconocida'):x.plannedMinutes+' min')+' · '+x.intensity).join('; ')||tr('No planned sessions','Sin sesiones previstas'));panel.append(row);}if(pending){const yes=document.createElement('button'),no=document.createElement('button');yes.textContent=tr('Confirm and save','Confirmar y guardar');no.textContent=tr('Cancel','Cancelar');yes.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(pending));saved=pending;pending=null;render();}catch(_){alert(tr('Unable to save. Previous schedule preserved.','No se pudo guardar. Programa anterior conservado.'));}};no.onclick=()=>{pending=null;render();};const controls=document.createElement('div');controls.className='week-buttons';controls.append(yes,no);panel.append(controls);} }
+ render();const hash=location.hash;if(!hash.startsWith('#tlhandoff='))return;
+ const token=hash.slice(11);history.replaceState(null,'',location.pathname+location.search);const sender=window.opener;
+ function trusted(){try{return !!sender&&sender.location.origin===ORIGIN&&sender.location.pathname===PATH;}catch(_){return false;}}
+ if(!/^[a-f0-9]{32}$/.test(token)||!trusted()){alert(tr('Training connection unavailable. No data changed.','Conexión no disponible. No se cambiaron datos.'));return;}
+ let done=false,timer;function send(type){sender.postMessage({protocol:PROTOCOL,version:1,type,token},ORIGIN);}
+ function cleanup(){done=true;clearTimeout(timer);window.removeEventListener('message',receive);}
+ function receive(e){if(done||e.source!==sender||e.origin!==ORIGIN||!trusted())return;const m=e.data;if(!m||m.protocol!==PROTOCOL||m.version!==1||m.token!==token||m.type!=='SUMMARY')return;try{pending=validate(m.payload);showWeek();render();panel.scrollIntoView({block:'start'});send('RECEIVED');cleanup();}catch(_){pending=null;render();try{send('ERROR');}finally{cleanup();}alert(tr('Invalid training summary. No data changed.','Programa inválido. No se cambiaron datos.'));}}
+ window.addEventListener('message',receive);timer=setTimeout(()=>{cleanup();alert(tr('Training transfer timed out. No data changed.','Transferencia agotada. No se cambiaron datos.'));},30000);send('READY');
+})();
+
+
 function preview(feature){if(feature==="week"){showWeek();return}if(feature==="meals"){showMeals();return}if(feature==="foods"){showFoods();return}if(feature==="profile"){showProfile();return}alert(language==="en"?"This feature is planned for a future Fuel Lab development stage.":"Esta función está prevista para una futura etapa de Fuel Lab.")}
 </script>
 <style>
