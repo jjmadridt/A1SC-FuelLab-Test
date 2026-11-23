@@ -218,6 +218,15 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <section id="weekScreen" class="week-screen" hidden aria-label="Weekly meal planner">
 <div class="profile-head"><h2 data-en="My Week · Meal Planner" data-es="Mi Semana · Plan de comidas">My Week · Meal Planner</h2><button onclick="showHome()" data-en="← Back home" data-es="← Volver al inicio">← Back home</button></div>
 <p class="profile-muted" data-en="Organize meals across seven days. Nutrient totals are preliminary estimates, not professional nutrition recommendations." data-es="Organiza las comidas de siete días. Los totales son estimaciones preliminares, no recomendaciones nutricionales profesionales.">Organize meals across seven days. Nutrient totals are preliminary estimates, not professional nutrition recommendations.</p>
+
+<div class="profile-panel" id="trainingPlannerPanel">
+<h3 data-en="TrainLab → Meal Program Preview" data-es="TrainLab → Vista previa de comidas">TrainLab → Meal Program Preview</h3>
+<p class="profile-muted" data-en="Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file." data-es="Programa de ejemplo basado en la plantilla semanal de TrainLab. Importa tu JSON localmente para actualizar la vista previa. No se sube tu archivo.">Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file.</p>
+<div class="week-buttons"><label for="trainlabImport" data-en="Import TrainLab JSON (on this device)" data-es="Importar JSON de TrainLab (en este dispositivo)">Import TrainLab JSON (on this device)</label><input type="file" id="trainlabImport" accept=".json,application/json" onchange="importTrainLabFile(this.files[0])"><button type="button" onclick="previewTrainingMeals()" data-en="Preview sample meal program" data-es="Ver programa de comidas de ejemplo">Preview sample meal program</button><button type="button" onclick="applyTrainingMeals()" id="applyTrainingMealsButton" disabled data-en="Use preview in My Week" data-es="Usar vista previa en Mi Semana">Use preview in My Week</button></div>
+<div id="trainingPlannerStatus" class="profile-muted" aria-live="polite"></div>
+<div id="trainingPlannerPreview" class="week-summary" aria-live="polite"></div>
+<p class="profile-muted" data-en="Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use." data-es="Solo demostración: las combinaciones y porciones NO se calculan con tus necesidades energéticas, alergias o antecedentes médicos. Los nutrientes preliminares no están validados para prescripciones. Revisa alimentos y porciones antes de usarlos.">Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use.</p>
+</div>
 <div class="week-controls"><label for="weekDay" data-en="Day" data-es="Día">Day</label><select id="weekDay" onchange="selectWeekDay(Number(this.value))"><option value="0" data-en="Monday" data-es="Lunes">Monday</option><option value="1" data-en="Tuesday" data-es="Martes">Tuesday</option><option value="2" data-en="Wednesday" data-es="Miércoles">Wednesday</option><option value="3" data-en="Thursday" data-es="Jueves">Thursday</option><option value="4" data-en="Friday" data-es="Viernes">Friday</option><option value="5" data-en="Saturday" data-es="Sábado">Saturday</option><option value="6" data-en="Sunday" data-es="Domingo">Sunday</option></select>
 <div class="week-buttons"><button type="button" onclick="copyBuilderToDay()" data-en="Copy Meal Builder → this day" data-es="Copiar Meal Builder → este día">Copy Meal Builder → this day</button><button type="button" onclick="copyWeekDay()" data-en="Copy day to…" data-es="Copiar día a…">Copy day to…</button><button type="button" onclick="clearWeekDay()" data-en="Clear this day" data-es="Borrar este día">Clear this day</button></div>
 <div class="week-actions-secondary"><button type="button" onclick="shareWeek()" data-en="Share plan via WhatsApp" data-es="Compartir plan por WhatsApp">Share plan via WhatsApp</button><button type="button" onclick="copyWeekLink()" data-en="Copy share link" data-es="Copiar enlace">Copy share link</button></div>
@@ -245,11 +254,11 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 </div>
 <p class="profile-muted" data-en="Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here." data-es="Los datos futuros de producción deberán incluir fuente identificada, código del alimento, porción comestible, unidades, nutrientes, versión/fecha y revisión de alérgenos cuando corresponda. Aquí no se guardan datos personales.">Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here.</p>
 </div></section>
-<footer>A1SC FUEL LAB · v1.2.9 TEST</footer>
+<footer>A1SC FUEL LAB · v1.3.0 TEST</footer>
 </main>
 <script>
 let language="en";
-function toggleLanguage(){language=language==="en"?"es":"en";document.documentElement.lang=language;document.querySelectorAll("[data-en][data-es]").forEach(el=>{el.textContent=el.dataset[language]});document.getElementById("languageButton").textContent=language==="en"?"ENG ▾":"ESP ▾";renderFoods();renderNutrientDemo();renderMealBuilder();renderWeek()}
+function toggleLanguage(){language=language==="en"?"es":"en";document.documentElement.lang=language;document.querySelectorAll("[data-en][data-es]").forEach(el=>{el.textContent=el.dataset[language]});document.getElementById("languageButton").textContent=language==="en"?"ENG ▾":"ESP ▾";renderFoods();renderNutrientDemo();renderMealBuilder();renderWeek();renderTrainingPreview()}
 
 let bodyUnits='metric';
 try{if(localStorage.getItem('fuelLabUnits')==='us')setTimeout(()=>setBodyUnits('us'),0)}catch(e){}
@@ -407,7 +416,7 @@ function validWeekPlan(w){return Array.isArray(w)&&w.length===7&&w.every(day=>Ar
 try{const saved=JSON.parse(localStorage.getItem(WEEK_KEY)||'null');if(validWeekPlan(saved))weekPlan=saved}catch(e){}
 function saveWeek(){try{localStorage.setItem(WEEK_KEY,JSON.stringify(weekPlan));return true}catch(e){return false}}
 function weekMessage(en,es){document.getElementById('weekFeedback').textContent=language==='en'?en:es}
-function showWeek(){for(const id of ['homeScreen','profileScreen','foodScreen','mealScreen'])document.getElementById(id).hidden=true;document.getElementById('weekScreen').hidden=false;renderWeek();window.scrollTo({top:0,behavior:'smooth'})}
+function showWeek(){for(const id of ['homeScreen','profileScreen','foodScreen','mealScreen'])document.getElementById(id).hidden=true;document.getElementById('weekScreen').hidden=false;renderWeek();renderTrainingPreview();window.scrollTo({top:0,behavior:'smooth'})}
 function selectWeekDay(n){if(!Number.isInteger(n)||n<0||n>6)return;weekDay=n;renderWeek()}
 function copyBuilderToDay(){if(!mealPlan.length){weekMessage('Build meals in My Meals first.','Primero crea comidas en Mis Comidas.');return}const replacement=mealPlan.map(({slot,food,grams})=>({slot,food,grams}));const candidate=weekPlan.map((d,i)=>i===weekDay?replacement:d);if(!validWeekPlan(candidate)){weekMessage('Plan exceeds the demo limit of 140 foods per week.','El plan excede el límite de 140 alimentos por semana.');return}if(weekPlan[weekDay].length&&!confirm(language==='en'?'Replace the selected day with the current Meal Builder plan?':'¿Reemplazar este día con el plan actual de Meal Builder?'))return;weekPlan=candidate;saveWeek();weekMessage('Copied to selected day.','Copiado al día seleccionado.');renderWeek()}
 function copyWeekDay(){if(!weekPlan[weekDay].length){weekMessage('This day has no meals to copy.','Este día no tiene comidas para copiar.');return}const names=weekDayNames[language];const answer=prompt((language==='en'?'Copy this day to which day? Enter 1–7:\n':'¿A qué día copiar? Escribe 1–7:\n')+names.map((x,i)=>(i+1)+'. '+x).join('\n'));if(answer===null)return;const n=Number(answer)-1;if(!Number.isInteger(n)||n<0||n>6||n===weekDay){weekMessage('Choose a different day from 1 to 7.','Elige otro día del 1 al 7.');return}const candidate=weekPlan.map((d,i)=>i===n?weekPlan[weekDay].map(x=>({...x})):d);if(!validWeekPlan(candidate)){weekMessage('Plan exceeds the demo limit.','El plan excede el límite de la demostración.');return}if(weekPlan[n].length&&!confirm(language==='en'?'Replace existing meals on '+names[n]+'?':'¿Reemplazar las comidas de '+names[n]+'?'))return;weekPlan=candidate;saveWeek();weekMessage('Day copied to '+names[n]+'.','Día copiado a '+names[n]+'.');renderWeek()}
@@ -416,6 +425,71 @@ function removeWeekItem(index){weekPlan[weekDay].splice(index,1);saveWeek();rend
 function weekTotals(items){const t={kcal:0,protein:0,carbs:0,fat:0};for(const e of items){const f=demoFoods[e.food];for(const k of Object.keys(t))t[k]+=f[k]*e.grams/100}return t}
 function renderWeek(){const screen=document.getElementById('weekScreen');if(!screen||screen.hidden)return;document.getElementById('weekDay').value=String(weekDay);const tabs=document.getElementById('weekTabs');tabs.replaceChildren();weekDayNames[language].forEach((name,i)=>{const b=document.createElement('button');b.textContent=name.slice(0,3);b.className=i===weekDay?'active':'';b.setAttribute('aria-label',name);b.onclick=()=>selectWeekDay(i);tabs.appendChild(b)});const out=document.getElementById('weekContents');out.replaceChildren();const heading=document.createElement('h3');heading.textContent=weekDayNames[language][weekDay];out.appendChild(heading);const fmt=v=>v.toLocaleString(language==='en'?'en-US':'es-MX',{maximumFractionDigits:1});for(let k=0;k<mealSlots.length;k++){const slot=mealSlots[k];const h=document.createElement('h4');h.textContent=mealNames[language][k];out.appendChild(h);const entries=weekPlan[weekDay].map((e,i)=>({...e,index:i})).filter(e=>e.slot===slot);if(!entries.length){const p=document.createElement('p');p.className='meal-empty';p.textContent=language==='en'?'No foods scheduled.':'Sin alimentos programados.';out.appendChild(p)}for(const e of entries){const line=document.createElement('div');line.className='week-entry';const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=demoFoods[e.food][language]+' · '+e.grams+' g';const small=document.createElement('small');small.textContent=fmt(demoFoods[e.food].kcal*e.grams/100)+' kcal';info.append(strong,small);const remove=document.createElement('button');remove.className='week-remove';remove.textContent=language==='en'?'Remove':'Quitar';remove.onclick=()=>removeWeekItem(e.index);line.append(info,remove);out.appendChild(line)}}const t=weekTotals(weekPlan[weekDay]);const total=document.createElement('p');total.className='meal-total';total.textContent=(language==='en'?'Estimated total: ':'Total estimado: ')+fmt(t.kcal)+' kcal · '+fmt(t.protein)+' g '+(language==='en'?'protein':'proteína')+' · '+fmt(t.carbs)+' g '+(language==='en'?'carbs':'carbohidratos')+' · '+fmt(t.fat)+' g '+(language==='en'?'fat':'grasas');out.appendChild(total);const weekly=weekTotals(weekPlan.flat());const summary=document.createElement('p');summary.className='profile-muted';summary.textContent=(language==='en'?'7-day preliminary total: ':'Total preliminar de 7 días: ')+fmt(weekly.kcal)+' kcal · '+weekPlan.flat().length+(language==='en'?' food entries':' alimentos');out.appendChild(summary)}
 // Compact URL payload. Never include medical/profile data or internal state other than foods, grams, meal slot and day.
+
+// v1.3: local-only TrainLab import and non-prescriptive sample meal preview.
+const defaultTrainingDays=['strength','strength','endurance','strength','recovery','longride','recovery'];
+let trainingDays=defaultTrainingDays.slice(), trainingPreview=null, trainingSource='template', trainingFlags=[];
+const trainingLabels={en:{strength:'Strength',endurance:'Aerobic cycling',longride:'Long ride',recovery:'Recovery'},es:{strength:'Fuerza',endurance:'Ciclismo aeróbico',longride:'Ruta larga',recovery:'Recuperación'}};
+function trainingStatus(en,es){document.getElementById('trainingPlannerStatus').textContent=language==='es'?es:en}
+function classifyTrainingDay(day){
+ const title=String(day.title||'').toLowerCase();const exercises=Array.isArray(day.exercises)?day.exercises:[];
+ if(/recover|rest|descanso|recupera/.test(title)&&!exercises.length)return 'recovery';
+ const rides=exercises.filter(e=>/ride|bike|spin|cycling|ciclismo|bicicleta/i.test(String(e.name||'')));
+ if(rides.length){const max=Math.max(...rides.map(e=>Number(e.targetMaximum)||Number(e.targetMinimum)||0));return max>=120?'longride':'endurance'}
+ return exercises.length?'strength':'recovery';
+}
+async function importTrainLabFile(file){
+ if(!file)return;
+ if(file.size>2*1024*1024){trainingStatus('File exceeds 2 MB limit.','El archivo excede 2 MB.');return}
+ try{
+ const obj=JSON.parse(await file.text());
+ if(obj.schema!=='a1sc.trainlab.fuellab-export'||obj.schemaVersion!==1||!Array.isArray(obj.weeklyPlan))throw Error('schema');
+ const weekdays=['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+ const mapped=weekdays.map(name=>obj.weeklyPlan.find(d=>String(d.weekday||'').toLowerCase()===name));
+ if(mapped.some(d=>!d||!Array.isArray(d.exercises)))throw Error('week');
+ trainingDays=mapped.map(classifyTrainingDay);trainingSource='import';trainingPreview=null;
+ document.getElementById('applyTrainingMealsButton').disabled=true;
+ const logs=Array.isArray(obj.loggedActivities)?obj.loggedActivities:[];
+ const recent=logs.filter(x=>typeof x.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)&&x.date>='2026-11-15');
+ const invalid=recent.filter(x=>Number(x.durationMinutes)>480||Number(x.durationMinutes)<0||!Number.isFinite(Number(x.amount)));
+ trainingFlags=[recent.length,invalid.length];
+ trainingStatus('Imported schedule locally. '+recent.length+' logged activities on/after Nov 15; '+invalid.length+' flagged. History does not automatically determine calorie targets.','Programa importado localmente. '+recent.length+' actividades desde el 15 de noviembre; '+invalid.length+' marcadas. El historial no determina automáticamente las calorías.');
+ renderTrainingPreview();
+ }catch(e){trainingStatus('Unsupported TrainLab JSON. Nothing was changed.','JSON de TrainLab no compatible. No se cambió nada.')}
+ document.getElementById('trainlabImport').value='';
+}
+function demoFoodIndex(name){return demoFoods.findIndex(f=>f.en===name)}
+// Fixed example grams deliberately do not represent energy targets or individualized portions.
+const exampleMenus={
+ strength:[[['Oats dry',55],['Plain Greek yogurt nonfat',170],['Banana',100]],[['Chicken breast cooked skinless',130],['Brown rice cooked',160],['Broccoli raw',120]],[['Salmon cooked',130],['Sweet potato baked',180],['Spinach raw',80]],[['Apple with skin',150]]],
+ endurance:[[['Oats dry',60],['Milk skim',200],['Banana',120]],[['Turkey breast roasted',120],['White rice cooked',180],['Carrot raw',100]],[['Black beans cooked',140],['Corn tortilla',80],['Tomato raw',100]],[['Plain Greek yogurt nonfat',170]]],
+ longride:[[['Oats dry',65],['Banana',120],['Milk skim',200]],[['Chicken breast cooked skinless',130],['Pasta cooked',200],['Zucchini',120]],[['Salmon cooked',130],['White rice cooked',180],['Broccoli raw',120]],[['Apple with skin',150],['Plain Greek yogurt nonfat',170]]],
+ recovery:[[['Egg whole boiled',100],['Whole wheat bread',70],['Orange',150]],[['Lentils cooked',180],['Spinach raw',90],['Tomato raw',100]],[['Tilapia cooked',140],['Quinoa cooked',150],['Broccoli raw',120]],[['Plain yogurt whole milk',170]]]
+};
+function previewTrainingMeals(){
+ const slots=['breakfast','lunch','dinner','snack'];
+ const proposed=trainingDays.map(type=>exampleMenus[type].flatMap((meal,i)=>meal.map(([name,grams])=>({slot:slots[i],food:demoFoodIndex(name),grams}))));
+ if(proposed.flat().some(e=>e.food<0)||!validWeekPlan(proposed)){trainingStatus('Sample menu could not be built. No changes made.','No se pudo crear el menú. No hubo cambios.');return}
+ trainingPreview=proposed;document.getElementById('applyTrainingMealsButton').disabled=false;
+ trainingStatus('Preview ready. Your saved My Week meals are unchanged.','Vista previa lista. Tus comidas guardadas no cambiaron.');renderTrainingPreview();
+}
+function renderTrainingPreview(){
+ const out=document.getElementById('trainingPlannerPreview');if(!out)return;out.replaceChildren();
+ const names=weekDayNames[language];
+ trainingDays.forEach((type,i)=>{
+ const p=document.createElement('p');const title=document.createElement('strong');title.textContent=names[i]+' · '+trainingLabels[language][type];p.appendChild(title);
+ if(trainingPreview){const details=document.createElement('span');const items=trainingPreview[i];details.textContent=' — '+items.length+(language==='es'?' alimentos de ejemplo':' sample foods');p.appendChild(details)}out.appendChild(p);
+ });
+ if(trainingPreview){const p=document.createElement('p');p.className='profile-muted';p.textContent=language==='es'?'Vista previa de siete días; puedes editar cada alimento después de aplicarla.':'Seven-day preview; every food can be edited after applying.';out.appendChild(p)}
+}
+function applyTrainingMeals(){
+ if(!trainingPreview||!validWeekPlan(trainingPreview))return;
+ if(!confirm(language==='es'?'¿Reemplazar las comidas actuales de Mi Semana con este programa de EJEMPLO? No es una recomendación nutricional personalizada.':'Replace your existing My Week meals with this SAMPLE program? It is not personalized nutrition guidance.'))return;
+ weekPlan=trainingPreview.map(day=>day.map(e=>({...e})));
+ if(!saveWeek()){trainingStatus('Unable to save on this device.','No se pudo guardar en este dispositivo.');return}
+ trainingStatus('Sample meals copied to My Week. Edit portions and foods as needed.','Comidas de ejemplo copiadas a Mi Semana. Edita porciones y alimentos.');renderWeek();
+}
+
 function encodeWeek(){const compact=weekPlan.map(day=>day.map(e=>[mealSlots.indexOf(e.slot),e.food,e.grams]));const json=JSON.stringify({v:1,d:compact});return btoa(json).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function weekLink(){const url=new URL(location.href);url.search='';url.hash='fuelweek='+encodeWeek();if(url.href.length>7000)throw Error('too-long');return url.href}
 async function copyWeekLink(){try{const url=weekLink();if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(url);weekMessage('Share link copied.','Enlace copiado.')}else{prompt(language==='en'?'Copy this share link:':'Copia este enlace:',url)}}catch(e){weekMessage('Plan is too large for a share link. Reduce items first.','El plan es demasiado grande para un enlace. Reduce alimentos primero.')}}
