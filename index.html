@@ -205,7 +205,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <p class="review-warning" data-en="A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records." data-es="La revisión corresponde a una versión específica del plan y a condiciones definidas, no a una persona permanentemente. Los cambios pueden requerir nueva evaluación. La aprobación real requerirá revisión profesional autenticada y registros de auditoría seguros.">A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records.</p>
 </div>
 <div class="profile-panel"><h3 data-en="TrainLab connection" data-es="Conexión con TrainLab">TrainLab connection</h3><p data-en="Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review." data-es="Más adelante podrás importar tu programa de entrenamiento o ingresar actividades manualmente. Conectar datos de entrenamiento no omitirá la revisión de seguridad nutricional.">Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review.</p><a class="navlink" href="https://jjmadridt.github.io/A1SC-TrainLab/" target="_blank" rel="noopener noreferrer" data-en="Open TrainLab ↗" data-es="Abrir TrainLab ↗">Open TrainLab ↗</a></div>
-<p class="profile-muted" data-en="Fuel Lab v1.2.5 · Interface prototype. No accounts or health records. Preliminary food calculations only." data-es="Fuel Lab v1.2.5 · Prototipo de interfaz. Sin cuentas ni expedientes de salud. Solo cálculos alimentarios preliminares.">Fuel Lab v1.2.5 · Interface prototype. No accounts or health records. Preliminary food calculations only.</p>
+<p class="profile-muted" data-en="Fuel Lab v1.3.4 · Interface prototype. No accounts or health records. Preliminary food calculations only." data-es="Fuel Lab v1.2.5 · Prototipo de interfaz. Sin cuentas ni expedientes de salud. Solo cálculos alimentarios preliminares.">Fuel Lab v1.3.4 · Interface prototype. No accounts or health records. Preliminary food calculations only.</p>
 </section>
 <section id="mealScreen" class="meal-screen" hidden>
 <div class="profile-head"><h2 data-en="Meal Builder" data-es="Creador de comidas">Meal Builder</h2><button onclick="showHome()" data-en="← Back home" data-es="← Volver al inicio">← Back home</button></div>
@@ -223,7 +223,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <div class="profile-panel" id="trainingPlannerPanel">
 <h3 data-en="TrainLab → Meal Program Preview" data-es="TrainLab → Vista previa de comidas">TrainLab → Meal Program Preview</h3>
 <p class="profile-muted" data-en="Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file." data-es="Programa de ejemplo basado en la plantilla semanal de TrainLab. Importa tu JSON localmente para actualizar la vista previa. No se sube tu archivo.">Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file.</p>
-<div class="week-buttons"><label for="trainlabImport" data-en="Import TrainLab JSON (on this device)" data-es="Importar JSON de TrainLab (en este dispositivo)">Import TrainLab JSON (on this device)</label><input type="file" id="trainlabImport" accept=".json,application/json" onchange="importTrainLabFile(this.files[0])"><button type="button" onclick="previewTrainingMeals()" data-en="Preview sample meal program" data-es="Ver programa de comidas de ejemplo">Preview sample meal program</button><button type="button" onclick="applyTrainingMeals()" id="applyTrainingMealsButton" disabled data-en="Use preview in My Week" data-es="Usar vista previa en Mi Semana">Use preview in My Week</button></div>
+<div class="week-buttons"><label for="trainlabImport" data-en="Import TrainLab JSON (on this device)" data-es="Importar JSON de TrainLab (en este dispositivo)">Import TrainLab JSON (on this device)</label><input type="file" id="trainlabImport" accept=".json,application/json" onchange="importTrainLabFile(this.files[0])"><button type="button" onclick="previewTrainingMeals()" data-en="Preview sample meal program" data-es="Ver programa de comidas de ejemplo">Preview sample meal program</button><button type="button" onclick="applyTrainingMeals()" id="applyTrainingMealsButton" data-en="Use preview in My Week" data-es="Usar vista previa en Mi Semana">Use preview in My Week</button></div>
 <div id="trainingPlannerStatus" class="profile-muted" aria-live="polite"></div>
 <div id="trainingPlannerPreview" class="week-summary" aria-live="polite"></div>
 <p class="profile-muted" data-en="Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use." data-es="Solo demostración: las combinaciones y porciones NO se calculan con tus necesidades energéticas, alergias o antecedentes médicos. Los nutrientes preliminares no están validados para prescripciones. Revisa alimentos y porciones antes de usarlos.">Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use.</p>
@@ -442,7 +442,7 @@ function weekSaveEdit(){
 function renderWeek(){
  const screen=document.getElementById('weekScreen');if(!screen||screen.hidden)return;
  const tabs=document.getElementById('weekTabs');tabs.replaceChildren();weekDayNames[language].forEach((name,i)=>{const b=document.createElement('button');b.textContent=name.slice(0,3);b.className=i===weekDay?'active':'';b.setAttribute('aria-label',name);b.onclick=()=>{weekEditor=null;selectWeekDay(i)};tabs.appendChild(b)});
- const out=document.getElementById('weekContents');out.replaceChildren();const heading=document.createElement('h3');heading.textContent=weekDayNames[language][weekDay];out.appendChild(heading);
+ const out=document.getElementById('weekContents');out.replaceChildren();if(!weekPlan.some(day=>day.length)){const notice=document.createElement('div');notice.className='week-inline-editor';const p=document.createElement('p');p.textContent=language==='en'?'No recommended meals have been added to My Week yet.':'Todavía no se han agregado comidas recomendadas a Mi Semana.';const b=document.createElement('button');b.type='button';b.textContent=language==='en'?'Load sample 7-day menu':'Cargar menú de ejemplo de 7 días';b.onclick=applyTrainingMeals;notice.append(p,b);out.appendChild(notice)}const heading=document.createElement('h3');heading.textContent=weekDayNames[language][weekDay];out.appendChild(heading);
  const fmt=v=>v.toLocaleString(language==='en'?'en-US':'es-MX',{maximumFractionDigits:1});
  const mkBtn=(text,action)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=text;btn.onclick=action;return btn};
  for(let k=0;k<mealSlots.length;k++){
@@ -450,7 +450,7 @@ function renderWeek(){
   const entries=weekPlan[weekDay].map((e,i)=>({...e,index:i})).filter(e=>e.slot===slot);
   if(!entries.length){const p=document.createElement('p');p.className='meal-empty';p.textContent=language==='en'?'No foods scheduled.':'Sin alimentos programados.';out.appendChild(p)}
   for(const e of entries){const line=document.createElement('div');line.className='week-entry';const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=demoFoods[e.food][language]+' · '+e.grams+' g';const small=document.createElement('small');small.textContent=fmt(demoFoods[e.food].kcal*e.grams/100)+' kcal';info.append(strong,small);
-   const actions=document.createElement('div');actions.className='week-entry-actions';actions.append(mkBtn(language==='en'?'Edit / Replace':'Editar / Cambiar',()=>weekEditItem(e.index)),mkBtn(language==='en'?'Remove':'Quitar',()=>{weekEditor=null;removeWeekItem(e.index)}));line.append(info,actions);out.appendChild(line)}
+   const actions=document.createElement('div');actions.className='week-entry-actions';actions.append(mkBtn(language==='en'?'Alternative':'Alternativa',()=>weekEditItem(e.index)),mkBtn(language==='en'?'Remove':'Quitar',()=>{weekEditor=null;removeWeekItem(e.index)}));line.append(info,actions);out.appendChild(line)}
   if(weekEditor&&weekEditor.slot===slot){const editor=document.createElement('div');editor.id='weekInlineEditor';editor.className='week-inline-editor';const title=document.createElement('strong');title.textContent=language==='en'?(weekEditor.index<0?'Add food to ':'Edit food in ')+(mealNames.en[k]):(weekEditor.index<0?'Agregar alimento a ':'Editar alimento en ')+mealNames.es[k];
    const search=document.createElement('input');search.type='search';search.placeholder=language==='en'?'Search foods…':'Buscar alimentos…';search.setAttribute('aria-label',search.placeholder);
    const select=document.createElement('select');select.id='weekEditFood';select.setAttribute('aria-label',language==='en'?'Choose food':'Elegir alimento');
@@ -486,7 +486,7 @@ async function importTrainLabFile(file){
  const mapped=weekdays.map(name=>obj.weeklyPlan.find(d=>String(d.weekday||'').toLowerCase()===name));
  if(mapped.some(d=>!d||!Array.isArray(d.exercises)))throw Error('week');
  trainingDays=mapped.map(classifyTrainingDay);trainingSource='import';trainingPreview=null;
- document.getElementById('applyTrainingMealsButton').disabled=true;
+ document.getElementById('applyTrainingMealsButton').disabled=false;
  const logs=Array.isArray(obj.loggedActivities)?obj.loggedActivities:[];
  const recent=logs.filter(x=>typeof x.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)&&x.date>='2026-11-15');
  const invalid=recent.filter(x=>Number(x.durationMinutes)>480||Number(x.durationMinutes)<0||!Number.isFinite(Number(x.amount)));
@@ -534,11 +534,16 @@ function renderTrainingPreview(){
  if(trainingPreview){const p=document.createElement('p');p.className='profile-muted';p.textContent=language==='es'?'Menú ilustrativo, no prescripción nutricional. Mi Semana no cambia hasta que confirmes.':'Illustrative menu, not a nutrition prescription. My Week stays unchanged until you confirm.';out.appendChild(p)}
 }
 function applyTrainingMeals(){
+ if(!trainingPreview)previewTrainingMeals();
  if(!trainingPreview||!validWeekPlan(trainingPreview))return;
  if(!confirm(language==='es'?'¿Reemplazar las comidas actuales de Mi Semana con este programa de EJEMPLO? No es una recomendación nutricional personalizada.':'Replace your existing My Week meals with this SAMPLE program? It is not personalized nutrition guidance.'))return;
+ const previous=weekPlan;
  weekPlan=trainingPreview.map(day=>day.map(e=>({...e})));
- if(!saveWeek()){trainingStatus('Unable to save on this device.','No se pudo guardar en este dispositivo.');return}
- trainingStatus('Sample meals copied to My Week. Edit portions and foods as needed.','Comidas de ejemplo copiadas a Mi Semana. Edita porciones y alimentos.');renderWeek();
+ if(!saveWeek()){weekPlan=previous;trainingStatus('Unable to save on this device.','No se pudo guardar en este dispositivo.');return}
+ weekDay=0;weekEditor=null;
+ trainingStatus('Sample meals copied to My Week. Edit portions and foods below.','Comidas de ejemplo copiadas a Mi Semana. Edita los alimentos abajo.');
+ renderWeek();
+ document.getElementById('weekContents').scrollIntoView({block:'start',behavior:'smooth'});
 }
 
 function encodeWeek(){const compact=weekPlan.map(day=>day.map(e=>[mealSlots.indexOf(e.slot),e.food,e.grams]));const json=JSON.stringify({v:1,d:compact});return btoa(json).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
