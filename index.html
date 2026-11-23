@@ -223,7 +223,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <div class="profile-panel" id="trainingPlannerPanel">
 <h3 data-en="TrainLab → Meal Program Preview" data-es="TrainLab → Vista previa de comidas">TrainLab → Meal Program Preview</h3>
 <p class="profile-muted" data-en="Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file." data-es="Programa de ejemplo basado en la plantilla semanal de TrainLab. Importa tu JSON localmente para actualizar la vista previa. No se sube tu archivo.">Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file.</p>
-<div class="week-buttons"><label for="trainlabImport" data-en="Import TrainLab JSON (on this device)" data-es="Importar JSON de TrainLab (en este dispositivo)">Import TrainLab JSON (on this device)</label><input type="file" id="trainlabImport" accept=".json,application/json" onchange="importTrainLabFile(this.files[0])"><button type="button" onclick="previewTrainingMeals()" data-en="Preview sample meal program" data-es="Ver programa de comidas de ejemplo">Preview sample meal program</button><button type="button" onclick="applyTrainingMeals()" id="applyTrainingMealsButton" data-en="Use preview in My Week" data-es="Usar vista previa en Mi Semana">Use preview in My Week</button></div>
+<div class="week-buttons"><label for="trainlabImport" data-en="Import TrainLab JSON (on this device)" data-es="Importar JSON de TrainLab (en este dispositivo)">Import TrainLab JSON (on this device)</label><input type="file" id="trainlabImport" accept=".json,application/json" onchange="importTrainLabFile(this.files[0])"><button type="button" onclick="previewTrainingMeals()" data-en="Preview sample meal program" data-es="Ver programa de comidas de ejemplo">Preview sample meal program</button></div>
 <div id="trainingPlannerStatus" class="profile-muted" aria-live="polite"></div>
 <div id="trainingPlannerPreview" class="week-summary" aria-live="polite"></div>
 <p class="profile-muted" data-en="Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use." data-es="Solo demostración: las combinaciones y porciones NO se calculan con tus necesidades energéticas, alergias o antecedentes médicos. Los nutrientes preliminares no están validados para prescripciones. Revisa alimentos y porciones antes de usarlos.">Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use.</p>
@@ -442,7 +442,7 @@ function weekSaveEdit(){
 function renderWeek(){
  const screen=document.getElementById('weekScreen');if(!screen||screen.hidden)return;
  const tabs=document.getElementById('weekTabs');tabs.replaceChildren();weekDayNames[language].forEach((name,i)=>{const b=document.createElement('button');b.textContent=name.slice(0,3);b.className=i===weekDay?'active':'';b.setAttribute('aria-label',name);b.onclick=()=>{weekEditor=null;selectWeekDay(i)};tabs.appendChild(b)});
- const out=document.getElementById('weekContents');out.replaceChildren();if(!weekPlan.some(day=>day.length)){const notice=document.createElement('div');notice.className='week-inline-editor';const p=document.createElement('p');p.textContent=language==='en'?'No recommended meals have been added to My Week yet.':'Todavía no se han agregado comidas recomendadas a Mi Semana.';const b=document.createElement('button');b.type='button';b.textContent=language==='en'?'Load sample 7-day menu':'Cargar menú de ejemplo de 7 días';b.onclick=applyTrainingMeals;notice.append(p,b);out.appendChild(notice)}const heading=document.createElement('h3');heading.textContent=weekDayNames[language][weekDay];out.appendChild(heading);
+ const out=document.getElementById('weekContents');out.replaceChildren();if(!weekPlan.some(day=>day.length)){const notice=document.createElement('div');notice.className='week-inline-editor';const p=document.createElement('p');p.textContent=language==='en'?'No recommended meals yet. Use Preview sample meal program above to load the week.':'Aún no hay comidas recomendadas. Usa Ver programa de comidas de ejemplo arriba para cargar la semana.';notice.append(p);out.appendChild(notice)}const heading=document.createElement('h3');heading.textContent=weekDayNames[language][weekDay];out.appendChild(heading);
  const fmt=v=>v.toLocaleString(language==='en'?'en-US':'es-MX',{maximumFractionDigits:1});
  const mkBtn=(text,action)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=text;btn.onclick=action;return btn};
  for(let k=0;k<mealSlots.length;k++){
@@ -486,7 +486,7 @@ async function importTrainLabFile(file){
  const mapped=weekdays.map(name=>obj.weeklyPlan.find(d=>String(d.weekday||'').toLowerCase()===name));
  if(mapped.some(d=>!d||!Array.isArray(d.exercises)))throw Error('week');
  trainingDays=mapped.map(classifyTrainingDay);trainingSource='import';trainingPreview=null;
- document.getElementById('applyTrainingMealsButton').disabled=false;
+
  const logs=Array.isArray(obj.loggedActivities)?obj.loggedActivities:[];
  const recent=logs.filter(x=>typeof x.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x.date)&&x.date>='2026-11-15');
  const invalid=recent.filter(x=>Number(x.durationMinutes)>480||Number(x.durationMinutes)<0||!Number.isFinite(Number(x.amount)));
@@ -508,8 +508,8 @@ function previewTrainingMeals(){
  const slots=['breakfast','lunch','dinner','snack'];
  const proposed=trainingDays.map(type=>exampleMenus[type].flatMap((meal,i)=>meal.map(([name,grams])=>({slot:slots[i],food:demoFoodIndex(name),grams}))));
  if(proposed.flat().some(e=>e.food<0)||!validWeekPlan(proposed)){trainingStatus('Sample menu could not be built. No changes made.','No se pudo crear el menú. No hubo cambios.');return}
- trainingPreview=proposed;document.getElementById('applyTrainingMealsButton').disabled=false;
- trainingStatus('Preview ready. Your saved My Week meals are unchanged.','Vista previa lista. Tus comidas guardadas no cambiaron.');renderTrainingPreview();
+ trainingPreview=proposed;
+ renderTrainingPreview();applyTrainingMeals();
 }
 function renderTrainingPreview(){
  const out=document.getElementById('trainingPlannerPreview');if(!out)return;out.replaceChildren();
@@ -531,17 +531,21 @@ function renderTrainingPreview(){
   }
   out.appendChild(section);
  });
- if(trainingPreview){const p=document.createElement('p');p.className='profile-muted';p.textContent=language==='es'?'Menú ilustrativo, no prescripción nutricional. Mi Semana no cambia hasta que confirmes.':'Illustrative menu, not a nutrition prescription. My Week stays unchanged until you confirm.';out.appendChild(p)}
+ if(trainingPreview){const p=document.createElement('p');p.className='profile-muted';p.textContent=language==='es'?'Menú ilustrativo, no prescripción nutricional.':'Illustrative menu, not a nutrition prescription.';out.appendChild(p)}
 }
 function applyTrainingMeals(){
- if(!trainingPreview)previewTrainingMeals();
  if(!trainingPreview||!validWeekPlan(trainingPreview))return;
- if(!confirm(language==='es'?'¿Reemplazar las comidas actuales de Mi Semana con este programa de EJEMPLO? No es una recomendación nutricional personalizada.':'Replace your existing My Week meals with this SAMPLE program? It is not personalized nutrition guidance.'))return;
+ // Never silently overwrite an existing edited plan. No confirmation is required for an empty week.
+ if(weekPlan.some(day=>day.length)){
+  trainingStatus('Your existing weekly meals were preserved. Clear the existing days before loading a new sample program.','Se conservaron las comidas actuales. Borra los días existentes antes de cargar un nuevo menú de ejemplo.');
+  document.getElementById('weekContents').scrollIntoView({block:'start',behavior:'smooth'});
+  return;
+ }
  const previous=weekPlan;
  weekPlan=trainingPreview.map(day=>day.map(e=>({...e})));
  if(!saveWeek()){weekPlan=previous;trainingStatus('Unable to save on this device.','No se pudo guardar en este dispositivo.');return}
  weekDay=0;weekEditor=null;
- trainingStatus('Sample meals copied to My Week. Edit portions and foods below.','Comidas de ejemplo copiadas a Mi Semana. Edita los alimentos abajo.');
+ trainingStatus('Sample meals loaded into My Week. Edit foods and portions below.','Comidas de ejemplo cargadas en Mi Semana. Edita los alimentos abajo.');
  renderWeek();
  document.getElementById('weekContents').scrollIntoView({block:'start',behavior:'smooth'});
 }
