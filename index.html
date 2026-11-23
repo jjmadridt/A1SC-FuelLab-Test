@@ -144,7 +144,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <div class="profile-panel" id="bodyProfileDemo">
 <h3 data-en="Body & activity profile · Demo" data-es="Perfil corporal y actividad · Demostración">Body & activity profile · Demo</h3>
 <div class="profile-status" data-en="TEST ONLY · Use fictional numbers. Nothing entered here is saved, transmitted, or included in shared meal-plan links. This is not a nutrition assessment." data-es="SOLO PRUEBA · Usa números ficticios. Nada de lo ingresado se guarda, transmite ni se incluye en enlaces compartidos. Esto no es una evaluación nutricional.">TEST ONLY · Use fictional numbers. Nothing entered here is saved, transmitted, or included in shared meal-plan links. This is not a nutrition assessment.</div>
-<div class="profile-actions" style="margin:12px 0"><span data-en="Measurements" data-es="Medidas">Measurements</span><button type="button" id="unitsMetric" class="primary" onclick="setBodyUnits('metric')" aria-pressed="true">Metric · cm/kg</button><button type="button" id="unitsUS" onclick="setBodyUnits('us')" aria-pressed="false">US · ft/in/lb</button></div>
+<div class="profile-actions" style="margin:12px 0"><span data-en="Measurements" data-es="Medidas">Measurements</span><button type="button" id="unitsToggle" class="primary" onclick="setBodyUnits(bodyUnits==='metric'?'us':'metric')" aria-label="Switch measurement units" data-en="Metric · cm/kg ⇄" data-es="Métrico · cm/kg ⇄">Metric · cm/kg ⇄</button></div>
 <div class="setup-grid">
 <label class="setup-field"><span data-en="Age (years)" data-es="Edad (años)">Age (years)</span><input id="bodyAge" type="number" min="18" max="100" inputmode="numeric" placeholder="e.g. 35"></label>
 <label class="setup-field" id="metricHeightField"><span data-en="Height (cm)" data-es="Estatura (cm)">Height (cm)</span><input id="bodyHeight" type="number" min="120" max="230" step="0.1" inputmode="decimal" placeholder="e.g. 170"></label><div id="usHeightField" class="setup-field" hidden><span data-en="Height (ft / in)" data-es="Estatura (pies / pulgadas)">Height (ft / in)</span><div style="display:flex;gap:8px"><input id="bodyFeet" aria-label="Feet" type="number" min="3" max="7" step="1" inputmode="numeric" placeholder="ft"><input id="bodyInches" aria-label="Inches" type="number" min="0" max="11.9" step="0.1" inputmode="decimal" placeholder="in"></div></div>
@@ -265,8 +265,10 @@ function setBodyUnits(next){
  document.getElementById('metricHeightField').hidden=next!=='metric';document.getElementById('usHeightField').hidden=next!=='us';
  weight.min=next==='us'?'66.1':'30';weight.max=next==='us'?'661.4':'300';weight.placeholder=next==='us'?'e.g. 154':'e.g. 70';
  const lbl=document.getElementById('bodyWeightLabel');lbl.dataset.en=next==='us'?'Weight (lb)':'Weight (kg)';lbl.dataset.es=next==='us'?'Peso (lb)':'Peso (kg)';lbl.textContent=lbl.dataset[language];
- document.getElementById('unitsMetric').classList.toggle('primary',next==='metric');document.getElementById('unitsUS').classList.toggle('primary',next==='us');
- document.getElementById('unitsMetric').setAttribute('aria-pressed',String(next==='metric'));document.getElementById('unitsUS').setAttribute('aria-pressed',String(next==='us'));
+ const toggle=document.getElementById('unitsToggle');
+ toggle.dataset.en=next==='metric'?'Metric · cm/kg ⇄':'US · ft/in/lb ⇄';
+ toggle.dataset.es=next==='metric'?'Métrico · cm/kg ⇄':'EE. UU. · pies/pulg/lb ⇄';
+ toggle.textContent=toggle.dataset[language];
 }
 function previewBodyProfile(){
  const age=document.getElementById('bodyAge'),weight=document.getElementById('bodyWeight'),fat=document.getElementById('bodyFat');
