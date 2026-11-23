@@ -1,5 +1,5 @@
 // Fuel Lab PWA update lifecycle: wait for user approval before activating a new worker.
-const CACHE = 'fuel-lab-pwa-v130';
+const CACHE = 'fuel-lab-pwa-v131';
 const ASSETS = ['./icon-192.png','./icon-512.png','./manifest.webmanifest'];
 self.addEventListener('install',event => {event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));});
 self.addEventListener('message',event=>{if(event.data && event.data.type==='SKIP_WAITING')self.skipWaiting();});

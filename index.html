@@ -477,10 +477,23 @@ function renderTrainingPreview(){
  const out=document.getElementById('trainingPlannerPreview');if(!out)return;out.replaceChildren();
  const names=weekDayNames[language];
  trainingDays.forEach((type,i)=>{
- const p=document.createElement('p');const title=document.createElement('strong');title.textContent=names[i]+' · '+trainingLabels[language][type];p.appendChild(title);
- if(trainingPreview){const details=document.createElement('span');const items=trainingPreview[i];details.textContent=' — '+items.length+(language==='es'?' alimentos de ejemplo':' sample foods');p.appendChild(details)}out.appendChild(p);
+  const section=document.createElement('section');section.style.cssText='padding:12px 0;border-bottom:1px solid rgba(255,255,255,.16)';
+  const title=document.createElement('strong');title.textContent=names[i]+' · '+trainingLabels[language][type];section.appendChild(title);
+  if(trainingPreview){
+   const entries=trainingPreview[i];
+   mealSlots.forEach((slot,slotIndex)=>{
+    const foods=entries.filter(e=>e.slot===slot);if(!foods.length)return;
+    const heading=document.createElement('div');heading.style.cssText='margin-top:9px;font-weight:600';heading.textContent=mealNames[language][slotIndex];section.appendChild(heading);
+    const list=document.createElement('ul');list.style.cssText='margin:4px 0 0;padding-left:22px';
+    foods.forEach(e=>{
+     const item=document.createElement('li');const food=demoFoods[e.food];
+     item.textContent=(food?food[language]:(language==='es'?'Alimento desconocido':'Unknown food'))+' — '+e.grams+' g';list.appendChild(item);
+    });section.appendChild(list);
+   });
+  }
+  out.appendChild(section);
  });
- if(trainingPreview){const p=document.createElement('p');p.className='profile-muted';p.textContent=language==='es'?'Vista previa de siete días; puedes editar cada alimento después de aplicarla.':'Seven-day preview; every food can be edited after applying.';out.appendChild(p)}
+ if(trainingPreview){const p=document.createElement('p');p.className='profile-muted';p.textContent=language==='es'?'Menú ilustrativo, no prescripción nutricional. Mi Semana no cambia hasta que confirmes.':'Illustrative menu, not a nutrition prescription. My Week stays unchanged until you confirm.';out.appendChild(p)}
 }
 function applyTrainingMeals(){
  if(!trainingPreview||!validWeekPlan(trainingPreview))return;
