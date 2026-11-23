@@ -143,10 +143,11 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <div class="profile-panel" id="bodyProfileDemo">
 <h3 data-en="Body & activity profile · Demo" data-es="Perfil corporal y actividad · Demostración">Body & activity profile · Demo</h3>
 <div class="profile-status" data-en="TEST ONLY · Use fictional numbers. Nothing entered here is saved, transmitted, or included in shared meal-plan links. This is not a nutrition assessment." data-es="SOLO PRUEBA · Usa números ficticios. Nada de lo ingresado se guarda, transmite ni se incluye en enlaces compartidos. Esto no es una evaluación nutricional.">TEST ONLY · Use fictional numbers. Nothing entered here is saved, transmitted, or included in shared meal-plan links. This is not a nutrition assessment.</div>
+<div class="profile-actions" style="margin:12px 0"><span data-en="Measurements" data-es="Medidas">Measurements</span><button type="button" id="unitsMetric" class="primary" onclick="setBodyUnits('metric')" aria-pressed="true">Metric · cm/kg</button><button type="button" id="unitsUS" onclick="setBodyUnits('us')" aria-pressed="false">US · ft/in/lb</button></div>
 <div class="setup-grid">
 <label class="setup-field"><span data-en="Age (years)" data-es="Edad (años)">Age (years)</span><input id="bodyAge" type="number" min="18" max="100" inputmode="numeric" placeholder="e.g. 35"></label>
-<label class="setup-field"><span data-en="Height (cm)" data-es="Estatura (cm)">Height (cm)</span><input id="bodyHeight" type="number" min="120" max="230" step="0.1" inputmode="decimal" placeholder="e.g. 170"></label>
-<label class="setup-field"><span data-en="Weight (kg)" data-es="Peso (kg)">Weight (kg)</span><input id="bodyWeight" type="number" min="30" max="300" step="0.1" inputmode="decimal" placeholder="e.g. 70"></label>
+<label class="setup-field" id="metricHeightField"><span data-en="Height (cm)" data-es="Estatura (cm)">Height (cm)</span><input id="bodyHeight" type="number" min="120" max="230" step="0.1" inputmode="decimal" placeholder="e.g. 170"></label><div id="usHeightField" class="setup-field" hidden><span data-en="Height (ft / in)" data-es="Estatura (pies / pulgadas)">Height (ft / in)</span><div style="display:flex;gap:8px"><input id="bodyFeet" aria-label="Feet" type="number" min="3" max="7" step="1" inputmode="numeric" placeholder="ft"><input id="bodyInches" aria-label="Inches" type="number" min="0" max="11.9" step="0.1" inputmode="decimal" placeholder="in"></div></div>
+<label class="setup-field"><span id="bodyWeightLabel" data-en="Weight (kg)" data-es="Peso (kg)">Weight (kg)</span><input id="bodyWeight" type="number" min="30" max="300" step="0.1" inputmode="decimal" placeholder="e.g. 70"></label>
 <label class="setup-field"><span data-en="Body fat % (optional)" data-es="Grasa corporal % (opcional)">Body fat % (optional)</span><input id="bodyFat" type="number" min="3" max="70" step="0.1" inputmode="decimal" placeholder="optional"></label>
 <label class="setup-field"><span data-en="Physiological reference (optional)" data-es="Referencia fisiológica (opcional)">Physiological reference (optional)</span><select id="bodyPhysiology"><option value="" data-en="Not specified" data-es="Sin especificar">Not specified</option><option value="female" data-en="Female reference" data-es="Referencia femenina">Female reference</option><option value="male" data-en="Male reference" data-es="Referencia masculina">Male reference</option><option value="review" data-en="Professional review / other" data-es="Revisión profesional / otra">Professional review / other</option></select></label>
 <label class="setup-field"><span data-en="Lifestyle activity" data-es="Actividad cotidiana">Lifestyle activity</span><select id="bodyLifestyle"><option value="" data-en="Choose a sample" data-es="Elige un ejemplo">Choose a sample</option><option value="sedentary" data-en="Mostly seated" data-es="Mayormente sedentaria">Mostly seated</option><option value="moderate" data-en="Regularly active" data-es="Actividad regular">Regularly active</option><option value="high" data-en="Physically demanding" data-es="Físicamente exigente">Physically demanding</option></select></label>
@@ -242,26 +243,46 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 </div>
 <p class="profile-muted" data-en="Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here." data-es="Los datos futuros de producción deberán incluir fuente identificada, código del alimento, porción comestible, unidades, nutrientes, versión/fecha y revisión de alérgenos cuando corresponda. Aquí no se guardan datos personales.">Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here.</p>
 </div></section>
-<footer>A1SC FUEL LAB · v1.2.5 TEST</footer>
+<footer>A1SC FUEL LAB · v1.2.6 TEST</footer>
 </main>
 <script>
 let language="en";
 function toggleLanguage(){language=language==="en"?"es":"en";document.documentElement.lang=language;document.querySelectorAll("[data-en][data-es]").forEach(el=>{el.textContent=el.dataset[language]});document.getElementById("languageButton").textContent=language==="en"?"ENG ▾":"ESP ▾";renderFoods();renderNutrientDemo();renderMealBuilder();renderWeek()}
 
+let bodyUnits='metric';
+function setBodyUnits(next){
+ if(next===bodyUnits)return;
+ const weight=document.getElementById('bodyWeight');
+ if(weight.value!=='' && Number.isFinite(Number(weight.value))){weight.value=String(Math.round(Number(weight.value)*(next==='us'?2.2046226218:1/2.2046226218)*10)/10);}
+ const cm=document.getElementById('bodyHeight'),feet=document.getElementById('bodyFeet'),inches=document.getElementById('bodyInches');
+ if(next==='us' && cm.value!==''){
+  const totalIn=Number(cm.value)/2.54;const ft=Math.floor(totalIn/12);feet.value=ft;inches.value=(totalIn-ft*12).toFixed(1);
+ }else if(next==='metric' && feet.value!==''){
+  cm.value=((Number(feet.value)*12+Number(inches.value||0))*2.54).toFixed(1);
+ }
+ bodyUnits=next;
+ document.getElementById('metricHeightField').hidden=next!=='metric';document.getElementById('usHeightField').hidden=next!=='us';
+ weight.min=next==='us'?'66.1':'30';weight.max=next==='us'?'661.4':'300';weight.placeholder=next==='us'?'e.g. 154':'e.g. 70';
+ const lbl=document.getElementById('bodyWeightLabel');lbl.dataset.en=next==='us'?'Weight (lb)':'Weight (kg)';lbl.dataset.es=next==='us'?'Peso (lb)':'Peso (kg)';lbl.textContent=lbl.dataset[language];
+ document.getElementById('unitsMetric').classList.toggle('primary',next==='metric');document.getElementById('unitsUS').classList.toggle('primary',next==='us');
+ document.getElementById('unitsMetric').setAttribute('aria-pressed',String(next==='metric'));document.getElementById('unitsUS').setAttribute('aria-pressed',String(next==='us'));
+}
 function previewBodyProfile(){
- const fields=['bodyAge','bodyHeight','bodyWeight','bodyFat'];
- const nums=fields.map(id=>document.getElementById(id));
- const required=nums.slice(0,3);
- const valid=required.every(el=>el.value!=='' && Number.isFinite(Number(el.value)) && Number(el.value)>=Number(el.min) && Number(el.value)<=Number(el.max));
- const fat=nums[3];
- const fatValid=fat.value===''||(Number.isFinite(Number(fat.value))&&Number(fat.value)>=3&&Number(fat.value)<=70);
+ const age=document.getElementById('bodyAge'),weight=document.getElementById('bodyWeight'),fat=document.getElementById('bodyFat');
+ const cm=bodyUnits==='metric'?Number(document.getElementById('bodyHeight').value):(Number(document.getElementById('bodyFeet').value)*12+Number(document.getElementById('bodyInches').value||0))*2.54;
+ const heightEntered=bodyUnits==='metric'?document.getElementById('bodyHeight').value!=='' :document.getElementById('bodyFeet').value!=='';
+ const kg=Number(weight.value)*(bodyUnits==='us'?1/2.2046226218:1);
+ const valid=age.value!==''&&Number(age.value)>=18&&Number(age.value)<=100&&heightEntered&&cm>=120&&cm<=230&&weight.value!==''&&kg>=30&&kg<=300;
+ const fatValid=fat.value===''||(Number(fat.value)>=3&&Number(fat.value)<=70);
  const out=document.getElementById('bodyProfileResult');
  if(!valid||!fatValid){out.textContent=language==='es'?'Ingresa edades, estaturas y pesos ficticios dentro de los límites indicados.':'Enter fictional age, height and weight within the displayed limits.';return;}
  const val=id=>{const el=document.getElementById(id);return el.selectedIndex>0?el.options[el.selectedIndex].text:(language==='es'?'No especificado':'Not specified')};
- const details=(language==='es'?'Ejemplo únicamente: ':'Fictional preview only: ')+nums[0].value+' '+(language==='es'?'años':'years')+' · '+nums[1].value+' cm · '+nums[2].value+' kg'+(fat.value?' · '+fat.value+'% '+(language==='es'?'grasa corporal':'body fat'):'')+' · '+val('bodyLifestyle')+' · '+val('bodyGoal')+' · '+val('bodyTraining');
+ const h=bodyUnits==='metric'?document.getElementById('bodyHeight').value+' cm':document.getElementById('bodyFeet').value+' ft '+(document.getElementById('bodyInches').value||'0')+' in';
+ const w=weight.value+(bodyUnits==='metric'?' kg':' lb');
+ const details=(language==='es'?'Ejemplo únicamente: ':'Fictional preview only: ')+age.value+' '+(language==='es'?'años':'years')+' · '+h+' · '+w+(fat.value?' · '+fat.value+'% '+(language==='es'?'grasa corporal':'body fat'):'')+' · '+val('bodyLifestyle')+' · '+val('bodyGoal')+' · '+val('bodyTraining');
  out.textContent=details+'\n'+(language==='es'?'No se calculan requerimientos ni porciones. No se guarda información.':'No requirements or portions calculated. No information saved.');
 }
-function clearBodyProfile(){['bodyAge','bodyHeight','bodyWeight','bodyFat'].forEach(id=>document.getElementById(id).value='');['bodyPhysiology','bodyLifestyle','bodyGoal','bodyTraining'].forEach(id=>document.getElementById(id).selectedIndex=0);const out=document.getElementById('bodyProfileResult');out.textContent=language==='es'?'Ejemplo borrado. No se guardó información.':'Demo cleared. No information was saved.';}
+function clearBodyProfile(){['bodyAge','bodyHeight','bodyWeight','bodyFat','bodyFeet','bodyInches'].forEach(id=>document.getElementById(id).value='');['bodyPhysiology','bodyLifestyle','bodyGoal','bodyTraining'].forEach(id=>document.getElementById(id).selectedIndex=0);const out=document.getElementById('bodyProfileResult');out.textContent=language==='es'?'Ejemplo borrado. No se guardó información.':'Demo cleared. No information was saved.';}
 
 function showHome(){document.getElementById("weekScreen").hidden=true;document.getElementById("mealScreen").hidden=true;document.getElementById("profileScreen").hidden=true;document.getElementById("foodScreen").hidden=true;document.getElementById("homeScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
 function showProfile(){document.getElementById("weekScreen").hidden=true;document.getElementById("mealScreen").hidden=true;document.getElementById("foodScreen").hidden=true;document.getElementById("homeScreen").hidden=true;document.getElementById("profileScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
