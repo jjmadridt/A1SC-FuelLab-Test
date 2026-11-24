@@ -133,7 +133,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <main class="app">
 <nav class="topbar" aria-label="Main navigation">
 <button onclick="showHome()" data-en="⌂ Home" data-es="⌂ Inicio">⌂ Home</button>
-<button onclick="preview('profile')" data-en="Profile" data-es="Perfil">Profile</button>
+<a class="navlink" id="trainLabNav" href="https://cycle-development-v2.a1sc-trainlab.pages.dev/">TRAIN LAB</a>
 <button type="button" id="unitsToggle" class="primary" onclick="setBodyUnits(bodyUnits==='metric'?'us':'metric')" aria-label="Switch measurement units" data-en="Metric · cm/kg ⇄" data-es="Métrico · cm/kg ⇄">Metric · cm/kg ⇄</button>
 <button id="languageButton" onclick="toggleLanguage()">ENG ▾</button>
 
@@ -147,7 +147,6 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <button class="card" onclick="openTodayMeals()"><img src="my-meals.jpg" alt="Colorful healthy meal"><span class="card-content"><span class="card-title" data-en="MY MEALS" data-es="MIS COMIDAS">MY MEALS</span><span class="card-desc"><i class="dot"></i><span data-en="Daily nutrition plan" data-es="Plan diario de nutrición">Daily nutrition plan</span></span></span></button>
 <button class="card" onclick="preview('week')"><img src="my-week.jpg" alt="Prepared healthy food"><span class="card-content"><span class="card-title" data-en="MY WEEK" data-es="MI SEMANA">MY WEEK</span><span class="card-desc"><i class="dot"></i><span data-en="Meals aligned to training" data-es="Comidas según tu entrenamiento">Meals aligned to training</span></span></span></button>
 <button class="card" onclick="preview('progress')"><img src="my-progress.jpg" alt="Fitness progress equipment"><span class="card-content"><span class="card-title" data-en="MY PROGRESS" data-es="MI PROGRESO">MY PROGRESS</span><span class="card-desc"><i class="dot"></i><span data-en="Nutrition, body data &amp; trends" data-es="Nutrición, medidas y tendencias">Nutrition, body data &amp; trends</span></span></span></button>
-<a class="card" href="https://cycle-development-v2.a1sc-trainlab.pages.dev/"><img src="trainlab.jpg" alt="A1SC cycling training"><span class="card-content"><span class="card-title">TRAINLAB</span><span class="card-desc"><i class="dot pink"></i><span data-en="Open your training app" data-es="Abrir tu app de entrenamiento">Open your training app</span></span></span></a>
 <button class="card" onclick="preview('foods')"><img src="food-library.jpg" alt="Selection of nutritious foods"><span class="card-content"><span class="card-title" data-en="FOOD LIBRARY" data-es="BIBLIOTECA DE ALIMENTOS">FOOD LIBRARY</span><span class="card-desc"><i class="dot"></i><span data-en="Foods, portions &amp; alternatives" data-es="Alimentos, porciones y opciones">Foods, portions &amp; alternatives</span></span></span></button>
 <button class="card" onclick="preview('profile')"><img src="my-profile.jpg" alt="Nutrition assessment and professional review"><span class="card-content"><span class="card-title" data-en="MY PROFILE" data-es="MI PERFIL">MY PROFILE</span><span class="card-desc"><i class="dot pink"></i><span data-en="Nutrition, safety &amp; professional support" data-es="Nutrición, seguridad y apoyo profesional">Nutrition, safety &amp; professional support</span></span></span></button>
 </section>
@@ -272,7 +271,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 </div>
 <p class="profile-muted" data-en="Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here." data-es="Los datos futuros de producción deberán incluir fuente identificada, código del alimento, porción comestible, unidades, nutrientes, versión/fecha y revisión de alérgenos cuando corresponda. Aquí no se guardan datos personales.">Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here.</p>
 </div></section>
-<footer>A1SC FUEL LAB · v1.3.8 TEST · 3B.11</footer>
+<footer>A1SC FUEL LAB · v1.3.9 TEST · 3B.12</footer>
 </main>
 <script>
 let language="en";
