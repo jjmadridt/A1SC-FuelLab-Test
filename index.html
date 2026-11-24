@@ -121,7 +121,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <button class="card" onclick="preview('meals')"><img src="my-meals.jpg" alt="Colorful healthy meal"><span class="card-content"><span class="card-title" data-en="MY MEALS" data-es="MIS COMIDAS">MY MEALS</span><span class="card-desc"><i class="dot"></i><span data-en="Daily nutrition plan" data-es="Plan diario de nutrición">Daily nutrition plan</span></span></span></button>
 <button class="card" onclick="preview('week')"><img src="my-week.jpg" alt="Prepared healthy food"><span class="card-content"><span class="card-title" data-en="MY WEEK" data-es="MI SEMANA">MY WEEK</span><span class="card-desc"><i class="dot"></i><span data-en="Meals aligned to training" data-es="Comidas según tu entrenamiento">Meals aligned to training</span></span></span></button>
 <button class="card" onclick="preview('progress')"><img src="my-progress.jpg" alt="Fitness progress equipment"><span class="card-content"><span class="card-title" data-en="MY PROGRESS" data-es="MI PROGRESO">MY PROGRESS</span><span class="card-desc"><i class="dot"></i><span data-en="Nutrition, body data &amp; trends" data-es="Nutrición, medidas y tendencias">Nutrition, body data &amp; trends</span></span></span></button>
-<a class="card" href="https://jjmadridt.github.io/A1SC-TrainLab/" target="_blank" rel="noopener noreferrer"><img src="trainlab.jpg" alt="A1SC cycling training"><span class="card-content"><span class="card-title">TRAINLAB</span><span class="card-desc"><i class="dot pink"></i><span data-en="Open your training app" data-es="Abrir tu app de entrenamiento">Open your training app</span></span></span></a>
+<a class="card" href="https://cycle-development-v2.a1sc-trainlab.pages.dev/" target="_blank" rel="noopener noreferrer"><img src="trainlab.jpg" alt="A1SC cycling training"><span class="card-content"><span class="card-title">TRAINLAB</span><span class="card-desc"><i class="dot pink"></i><span data-en="Open your training app" data-es="Abrir tu app de entrenamiento">Open your training app</span></span></span></a>
 <button class="card" onclick="preview('foods')"><img src="food-library.jpg" alt="Selection of nutritious foods"><span class="card-content"><span class="card-title" data-en="FOOD LIBRARY" data-es="BIBLIOTECA DE ALIMENTOS">FOOD LIBRARY</span><span class="card-desc"><i class="dot"></i><span data-en="Foods, portions &amp; alternatives" data-es="Alimentos, porciones y opciones">Foods, portions &amp; alternatives</span></span></span></button>
 <button class="card" onclick="preview('profile')"><img src="my-profile.jpg" alt="Nutrition assessment and professional review"><span class="card-content"><span class="card-title" data-en="MY PROFILE" data-es="MI PERFIL">MY PROFILE</span><span class="card-desc"><i class="dot pink"></i><span data-en="Nutrition, safety &amp; professional support" data-es="Nutrición, seguridad y apoyo profesional">Nutrition, safety &amp; professional support</span></span></span></button>
 </section>
@@ -204,7 +204,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 </div>
 <p class="review-warning" data-en="A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records." data-es="La revisión corresponde a una versión específica del plan y a condiciones definidas, no a una persona permanentemente. Los cambios pueden requerir nueva evaluación. La aprobación real requerirá revisión profesional autenticada y registros de auditoría seguros.">A review applies to a specific plan version and stated conditions, not permanently to a person. Changes may require reassessment. Real approval will require authenticated professional review and secure audit records.</p>
 </div>
-<div class="profile-panel"><h3 data-en="TrainLab connection" data-es="Conexión con TrainLab">TrainLab connection</h3><p data-en="Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review." data-es="Más adelante podrás importar tu programa de entrenamiento o ingresar actividades manualmente. Conectar datos de entrenamiento no omitirá la revisión de seguridad nutricional.">Later, you can import your training schedule or enter activities manually. Connecting training data will not bypass nutrition safety review.</p><a class="navlink" href="https://jjmadridt.github.io/A1SC-TrainLab/" target="_blank" rel="noopener noreferrer" data-en="Open TrainLab ↗" data-es="Abrir TrainLab ↗">Open TrainLab ↗</a></div>
+<div class="profile-panel"><h3 data-en="TrainLab connection" data-es="Conexión con TrainLab">TrainLab connection</h3><p data-en="Open TRAIN LAB to send your weekly training schedule directly. Connecting training data will not bypass nutrition safety review." data-es="Abre TRAIN LAB para enviar directamente tu programa semanal. Conectar datos de entrenamiento no omitirá la revisión de seguridad nutricional.">Open TRAIN LAB to send your weekly training schedule directly. Connecting training data will not bypass nutrition safety review.</p><a class="navlink" href="https://cycle-development-v2.a1sc-trainlab.pages.dev/" target="_blank" rel="noopener noreferrer" data-en="Open TrainLab ↗" data-es="Abrir TrainLab ↗">Open TrainLab ↗</a></div>
 <p class="profile-muted" data-en="Fuel Lab v1.3.4 · Interface prototype. No accounts or health records. Preliminary food calculations only." data-es="Fuel Lab v1.2.5 · Prototipo de interfaz. Sin cuentas ni expedientes de salud. Solo cálculos alimentarios preliminares.">Fuel Lab v1.3.4 · Interface prototype. No accounts or health records. Preliminary food calculations only.</p>
 </section>
 <section id="mealScreen" class="meal-screen" hidden>
@@ -442,7 +442,7 @@ function weekSaveEdit(){
 function renderWeek(){
  const screen=document.getElementById('weekScreen');if(!screen||screen.hidden)return;
  const tabs=document.getElementById('weekTabs');tabs.replaceChildren();weekDayNames[language].forEach((name,i)=>{const b=document.createElement('button');b.textContent=name.slice(0,3);b.className=i===weekDay?'active':'';b.setAttribute('aria-label',name);b.onclick=()=>{weekEditor=null;selectWeekDay(i)};tabs.appendChild(b)});
- const out=document.getElementById('weekContents');out.replaceChildren();if(!weekPlan.some(day=>day.length)){const notice=document.createElement('div');notice.className='week-inline-editor';const p=document.createElement('p');p.textContent=language==='en'?'No recommended meals yet. Use Preview sample meal program above to load the week.':'Aún no hay comidas recomendadas. Usa Ver programa de comidas de ejemplo arriba para cargar la semana.';notice.append(p);out.appendChild(notice)}const heading=document.createElement('h3');heading.textContent=weekDayNames[language][weekDay];out.appendChild(heading);
+ const out=document.getElementById('weekContents');out.replaceChildren();if(!weekPlan.some(day=>day.length)){const notice=document.createElement('div');notice.className='week-inline-editor';const p=document.createElement('p');p.textContent=language==='en'?'No meals scheduled yet. Add foods to your week using the meal controls.':'Aún no hay comidas programadas. Agrega alimentos a tu semana con los controles de comidas.';notice.append(p);out.appendChild(notice)}const heading=document.createElement('h3');heading.textContent=weekDayNames[language][weekDay];out.appendChild(heading);
  const fmt=v=>v.toLocaleString(language==='en'?'en-US':'es-MX',{maximumFractionDigits:1});
  const mkBtn=(text,action)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=text;btn.onclick=action;return btn};
  for(let k=0;k<mealSlots.length;k++){
@@ -558,44 +558,50 @@ function decodeWeek(encoded){if(!/^[A-Za-z0-9_-]{1,12000}$/.test(encoded))return
 function checkSharedWeek(){const hash=location.hash;if(!hash.startsWith('#fuelweek='))return;let plan=null;try{plan=decodeWeek(hash.slice(10))}catch(e){}history.replaceState(null,'',location.pathname+location.search);if(!plan){alert(language==='en'?'This meal-plan link is invalid or incompatible.':'El enlace del plan es inválido o incompatible.');return}const count=plan.flat().length;if(confirm((language==='en'?'Import shared 7-day plan with ':'¿Importar plan compartido de 7 días con ')+count+(language==='en'?' foods? This replaces your saved weekly plan, not your Meal Builder. Preliminary nutrition data only.':' alimentos? Reemplaza tu plan semanal guardado, no Meal Builder. Datos nutricionales preliminares.'))){weekPlan=plan;saveWeek();showWeek();weekMessage('Shared plan imported to this device.','Plan compartido importado en este dispositivo.')}}
 checkSharedWeek();
 
-// Integration v1: validated local snapshot, separate from existing meal data.
+// Phase 3B.3: direct cross-origin schedule handoff; no opener or profile transfer.
 (function(){
- const KEY='a1sc.fuellab.training-summary.v1', ORIGIN='https://6f24e24c.a1sc-trainlab.pages.dev', PROTOCOL='a1sc.trainlab-fuellab';
+ const KEY='a1sc.fuellab.training-summary.v1',PREFIX='#tlplan=';
  const tr=(en,es)=>language==='es'?es:en;
- const disciplines=['strength','cycle','run','swim','triathlon'], intensities=['easy','moderate','hard','unknown'];
+ const disciplines=['strength','cycle','run','swim','triathlon'],intensities=['unknown','easy','moderate','hard'];
+ const labels={en:['Total Body','Cycle','Run','Swim','Triathlon'],es:['Cuerpo completo','Ciclismo','Carrera','Natación','Triatlón']};
+ const effortLabels={en:['','Easy','Moderate','Hard'],es:['','Suave','Moderado','Intenso']};
  function date(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))throw Error('date');const d=new Date(v+'T00:00:00Z');if(!Number.isFinite(+d)||d.toISOString().slice(0,10)!==v)throw Error('date');return d;}
- function minutes(v){return v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1440);}
+ function minutes(v){return v===null||(Number.isInteger(v)&&v>=1&&v<=1440);}
+ function count(v){return Number.isInteger(v)&&v>=1&&v<=1000;}
  function validate(p){
   if(!p||p.schema!=='a1sc.training-summary'||p.version!==1||p.source!=='trainlab'||typeof p.timezone!=='string'||p.timezone.length>100||!Array.isArray(p.days)||p.days.length!==7)throw Error('schema');
   new Intl.DateTimeFormat('en',{timeZone:p.timezone});const start=date(p.weekStart);if(start.getUTCDay()!==1)throw Error('week');
-  const days=p.days.map((day,i)=>{const expected=new Date(+start+i*86400000).toISOString().slice(0,10);if(!day||day.date!==expected||!Array.isArray(day.sessions)||day.sessions.length>100)throw Error('day');return {date:expected,sessions:day.sessions.map(x=>{if(!x||!disciplines.includes(x.discipline)||!minutes(x.plannedMinutes)||!intensities.includes(x.intensity))throw Error('session');const y={discipline:x.discipline,plannedMinutes:x.plannedMinutes,intensity:x.intensity};if(x.completed!==undefined){if(!x.completed||!minutes(x.completed.durationMinutes)||!intensities.includes(x.completed.intensity))throw Error('completed');y.completed={durationMinutes:x.completed.durationMinutes,intensity:x.completed.intensity};}return y;})};});
+  const days=p.days.map((day,i)=>{const expected=new Date(+start+i*86400000).toISOString().slice(0,10);if(!day||day.date!==expected||!Array.isArray(day.sessions)||day.sessions.length>5)throw Error('day');const seen=new Set();let total=0;const sessions=day.sessions.map(x=>{
+   if(!x||!disciplines.includes(x.discipline)||seen.has(x.discipline)||!minutes(x.plannedMinutes)||!intensities.includes(x.intensity)||(x.activityCount!==undefined&&!count(x.activityCount)))throw Error('session');seen.add(x.discipline);total+=x.plannedMinutes??0;
+   const y={discipline:x.discipline,plannedMinutes:x.plannedMinutes,intensity:x.intensity};if(x.activityCount!==undefined)y.activityCount=x.activityCount;return y;
+  });if(total>1440)throw Error('daily duration');return {date:expected,sessions};});
   return {schema:p.schema,version:1,source:p.source,weekStart:p.weekStart,timezone:p.timezone,days};
  }
- const panel=document.createElement('div');panel.className='profile-panel';document.getElementById('trainingPlannerPreview').before(panel);
- let saved=null,pending=null;try{saved=validate(JSON.parse(localStorage.getItem(KEY)));}catch(_){}
- function render(){panel.replaceChildren();const p=pending||saved;if(!p)return;const h=document.createElement('h3');h.textContent= pending?tr('Training schedule received — confirm','Programa recibido — confirmar'):tr('Saved TrainLab schedule','Programa de TrainLab guardado');panel.append(h);const info=document.createElement('p');info.textContent=p.weekStart+' · '+p.timezone;panel.append(info);for(const day of p.days){const row=document.createElement('p');row.textContent=day.date+' — '+(day.sessions.map(x=>x.discipline+' · '+(x.plannedMinutes===null?tr('duration unknown','duración desconocida'):x.plannedMinutes+' min')+' · '+x.intensity).join('; ')||tr('No planned sessions','Sin sesiones previstas'));panel.append(row);}if(pending){const yes=document.createElement('button'),no=document.createElement('button');yes.textContent=tr('Confirm and save','Confirmar y guardar');no.textContent=tr('Cancel','Cancelar');yes.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(pending));saved=pending;pending=null;render();}catch(_){alert(tr('Unable to save. Previous schedule preserved.','No se pudo guardar. Programa anterior conservado.'));}};no.onclick=()=>{pending=null;render();};const controls=document.createElement('div');controls.className='week-buttons';controls.append(yes,no);panel.append(controls);} }
- render();const hash=location.hash;if(!hash.startsWith('#tlhandoff='))return;
- const token=hash.slice(11);history.replaceState(null,'',location.pathname+location.search);const sender=window.opener;
- const diagnostic=(en,es)=>alert(tr(en+' No data changed.',es+' No se cambiaron datos.'));
- if(!sender||sender.closed){diagnostic('Training connection: missing opener.','Conexión: falta la ventana de origen.');return;}
- if(!/^[a-f0-9]{32}$/.test(token)){diagnostic('Training connection: invalid token.','Conexión: token inválido.');return;}
- let done=false,timer;
- function send(type){sender.postMessage({protocol:PROTOCOL,version:1,type,token},ORIGIN);}
- function cleanup(){done=true;clearTimeout(timer);window.removeEventListener('message',receive);}
- function fail(en,es,notify=false){cleanup();if(notify){try{send('ERROR');}catch(_){}}diagnostic(en,es);}
- function receive(e){
-  if(done||e.source!==sender||e.source!==window.opener)return;
-  if(e.origin!==ORIGIN){fail('Training connection: unapproved origin.','Conexión: origen no autorizado.');return;}
-  const m=e.data;
-  if(!m||m.protocol!==PROTOCOL||m.version!==1||m.type!=='SUMMARY')return;
-  if(m.token!==token){fail('Training connection: invalid token.','Conexión: token inválido.',true);return;}
-  try{pending=validate(m.payload);showWeek();render();panel.scrollIntoView({block:'start'});send('RECEIVED');cleanup();}
-  catch(_){pending=null;render();fail('Invalid training summary.','Programa inválido.',true);}
+ function decode(hash){
+  if(!hash.startsWith(PREFIX)||hash.length>8000)throw Error('link');
+  const c=JSON.parse(decodeURIComponent(hash.slice(PREFIX.length)));if(!c||c.v!==1||!Array.isArray(c.d)||c.d.length!==7)throw Error('schema');const start=date(c.w);
+  const days=c.d.map((rows,i)=>{if(!Array.isArray(rows)||rows.length>5)throw Error('rows');return {date:new Date(+start+i*86400000).toISOString().slice(0,10),sessions:rows.map(row=>{
+   if(!Array.isArray(row)||row.length!==4||!Number.isInteger(row[0])||row[0]<0||row[0]>=disciplines.length||!count(row[1])||!minutes(row[2])||!Number.isInteger(row[3])||row[3]<0||row[3]>=intensities.length)throw Error('row');
+   return {discipline:disciplines[row[0]],activityCount:row[1],plannedMinutes:row[2],intensity:intensities[row[3]]};
+  })};});return validate({schema:'a1sc.training-summary',version:1,source:'trainlab',weekStart:c.w,timezone:c.z,days});
  }
- window.addEventListener('message',receive);
- timer=setTimeout(()=>fail('Training transfer timed out. Verify the approved sender origin and browser connection.','Transferencia agotada. Verifica el origen autorizado y la conexión.',true),30000);
- try{send('READY');}catch(_){fail('Training connection: unable to contact opener.','Conexión: no se pudo contactar la ventana de origen.');}
-
+ const legacy=document.getElementById('trainingPlannerPanel');const panel=document.createElement('div');panel.id='tl-connected-schedule';panel.className='profile-panel';legacy.before(panel);
+ let saved=null,pending=null,error=false,manual=false;try{saved=validate(JSON.parse(localStorage.getItem(KEY)));}catch(_){}
+ function add(tag,text,cls){const el=document.createElement(tag);el.textContent=text;if(cls)el.className=cls;panel.append(el);return el;}
+ function render(){
+  panel.replaceChildren();const p=pending||saved;panel.hidden=!p&&!error;legacy.hidden=!!p&&!manual;legacy.style.display=legacy.hidden?'none':'';
+  if(error)add('p',tr('Training schedule link could not be read. Existing data was preserved.','No se pudo leer el programa. Se conservaron los datos existentes.'),'profile-muted');
+  if(!p)return;
+  add('h3',pending?tr('Training schedule received','Programa de entrenamiento recibido'):tr('TRAIN LAB · Weekly schedule','TRAIN LAB · Programa semanal'));
+  add('p',p.weekStart+' · '+p.timezone,'profile-muted');
+  for(const day of p.days){const row=document.createElement('div');row.style.cssText='padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12)';const name=document.createElement('strong');name.textContent=new Intl.DateTimeFormat(language,{weekday:'long',timeZone:'UTC'}).format(new Date(day.date+'T00:00:00Z'));row.append(name);const detail=document.createElement('div');detail.textContent=day.sessions.map(x=>{const parts=[labels[language][disciplines.indexOf(x.discipline)]];if(x.activityCount!==undefined)parts.push(String(x.activityCount)+' '+(x.activityCount===1?tr('activity','actividad'):tr('activities','actividades')));if(x.plannedMinutes!==null)parts.push(x.plannedMinutes+' min');if(x.intensity!=='unknown')parts.push(effortLabels[language][intensities.indexOf(x.intensity)]);return parts.join(' · ');}).join(' / ')||tr('No scheduled training','Sin entrenamiento programado');row.append(detail);panel.append(row);}
+  add('p',tr('This schedule is training context only. Your existing meals are unchanged. Personalized nutrition planning is not yet enabled.','Este programa es solo contexto de entrenamiento. Tus comidas actuales no cambian. La planificación nutricional personalizada aún no está habilitada.'),'profile-muted');
+  if(pending){const controls=document.createElement('div');controls.className='week-buttons';const yes=document.createElement('button'),no=document.createElement('button');yes.type=no.type='button';yes.textContent=tr('Use this schedule','Usar este programa');no.textContent=tr('Cancel','Cancelar');yes.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(pending));saved=pending;pending=null;manual=false;render();}catch(_){alert(tr('Unable to save. Previous schedule preserved.','No se pudo guardar. Programa anterior conservado.'));}};no.onclick=()=>{pending=null;manual=false;render();};controls.append(yes,no);panel.append(controls);}
+  else{const toggle=document.createElement('button');toggle.type='button';toggle.textContent=manual?tr('Hide sample tools','Ocultar herramientas de ejemplo'):tr('Show sample tools','Mostrar herramientas de ejemplo');toggle.onclick=()=>{manual=!manual;render();};panel.append(toggle);}
+ }
+ document.getElementById('languageButton').addEventListener('click',()=>queueMicrotask(render));
+ function receive(){const hash=location.hash;if(!hash.startsWith(PREFIX))return;try{history.replaceState(null,'',location.pathname+location.search);pending=decode(hash);error=false;manual=false;}catch(_){pending=null;error=true;}showWeek();render();panel.scrollIntoView({block:'start'});}
+ window.addEventListener('hashchange',receive);render();receive();
 })();
 
 
