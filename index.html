@@ -185,7 +185,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 </section>
 <p class="notice" data-en="Development preview only. Personalized nutrition recommendations are not active." data-es="Vista de desarrollo. Las recomendaciones nutricionales personalizadas aún no están activas.">Development preview only. Personalized nutrition recommendations are not active.</p>
 </div>
-<section id="profileScreen" class="profile-screen fl-profile" hidden><div class="profile-head"><h2 data-en="My Profile" data-es="Mi perfil">My Profile</h2><button data-en="← Back home" data-es="← Volver al inicio" onclick="showHome()">← Back home</button></div><p class="fl-profile-intro" data-en="Choose a section to set up your sample profile." data-es="Elige una sección para configurar tu perfil de ejemplo.">Choose a section to set up your sample profile.</p><div class="fl-profile-notice"><strong  data-en="Test profile" data-es="Perfil de prueba">Test profile</strong><span  data-en="Use fictional details only. Nothing is saved or sent. Personalized nutrition is not enabled." data-es="Usa solo datos ficticios. No se guardan ni envían. La nutrición personalizada no está activa.">Use fictional details only. Nothing is saved or sent. Personalized nutrition is not enabled.</span></div><details class="fl-profile-card" name="fl-profile-sections" id="flProfile-goal"><summary><span class="fl-profile-icon" aria-hidden="true">🎯</span><span class="fl-profile-copy"><strong  data-en="My goal" data-es="Mi objetivo">My goal</strong><small  data-en="Wellness, performance or body composition" data-es="Bienestar, rendimiento o composición corporal">Wellness, performance or body composition</small></span><span class="fl-profile-arrow" aria-hidden="true">⌄</span></summary><div class="fl-profile-inner"><div class="profile-options" id="goalOptions"><button aria-pressed="false" class="profile-option" data-goal="general"><span aria-hidden="true" class="fl-goal-icon">🌿</span><span data-en="Everyday wellness" data-es="Bienestar diario">Everyday wellness</span></button><button aria-pressed="false" class="profile-option" data-goal="performance"><span aria-hidden="true" class="fl-goal-icon">🚴</span><span data-en="Athletic performance" data-es="Rendimiento deportivo">Athletic performance</span></button><button aria-pressed="false" class="profile-option" data-goal="body"><span aria-hidden="true" class="fl-goal-icon">💪</span><span data-en="Body composition" data-es="Composición corporal">Body composition</span></button></div><div aria-live="polite" class="profile-status" data-en="No sample goal selected." data-es="Sin objetivo de ejemplo." id="goalStatus">No sample goal selected.</div></div></details><details class="fl-profile-card" name="fl-profile-sections" id="flProfile-body"><summary><span class="fl-profile-icon" aria-hidden="true">📏</span><span class="fl-profile-copy"><strong  data-en="About me" data-es="Sobre mí">About me</strong><small  data-en="Age, height and weight" data-es="Edad, estatura y peso">Age, height and weight</small></span><span class="fl-profile-arrow" aria-hidden="true">⌄</span></summary><div class="fl-profile-inner">
+<section id="profileScreen" class="profile-screen fl-profile" hidden><div class="profile-head"><h2 data-en="My Profile" data-es="Mi perfil">My Profile</h2><button data-en="← Back home" data-es="← Volver al inicio" onclick="showHome()">← Back home</button></div><p class="fl-profile-intro" data-en="Choose a section to set up your sample profile." data-es="Elige una sección para configurar tu perfil de ejemplo.">Choose a section to set up your sample profile.</p><div class="fl-profile-notice"><strong  data-en="Test profile" data-es="Perfil de prueba">Test profile</strong><span  data-en="Only your goal is saved on this device. Use fictional details in the other sections. Personalized nutrition is not enabled." data-es="Solo se guarda tu objetivo en este dispositivo. Usa datos ficticios en las otras secciones. La nutrición personalizada no está activa.">Only your goal is saved on this device. Use fictional details in the other sections. Personalized nutrition is not enabled.</span></div><details class="fl-profile-card" name="fl-profile-sections" id="flProfile-goal"><summary><span class="fl-profile-icon" aria-hidden="true">🎯</span><span class="fl-profile-copy"><strong  data-en="My goal" data-es="Mi objetivo">My goal</strong><small id="goalSummary" data-en="Wellness, performance or body composition" data-es="Bienestar, rendimiento o composición corporal">Wellness, performance or body composition</small></span><span class="fl-profile-arrow" aria-hidden="true">⌄</span></summary><div class="fl-profile-inner"><div class="profile-options" id="goalOptions"><button aria-pressed="false" class="profile-option" data-goal="general"><span aria-hidden="true" class="fl-goal-icon">🌿</span><span data-en="Everyday wellness" data-es="Bienestar diario">Everyday wellness</span></button><button aria-pressed="false" class="profile-option" data-goal="performance"><span aria-hidden="true" class="fl-goal-icon">🚴</span><span data-en="Athletic performance" data-es="Rendimiento deportivo">Athletic performance</span></button><button aria-pressed="false" class="profile-option" data-goal="body"><span aria-hidden="true" class="fl-goal-icon">💪</span><span data-en="Body composition" data-es="Composición corporal">Body composition</span></button></div><div aria-live="polite" class="profile-status" data-en="No sample goal selected." data-es="Sin objetivo de ejemplo." id="goalStatus">No sample goal selected.</div></div></details><details class="fl-profile-card" name="fl-profile-sections" id="flProfile-body"><summary><span class="fl-profile-icon" aria-hidden="true">📏</span><span class="fl-profile-copy"><strong  data-en="About me" data-es="Sobre mí">About me</strong><small  data-en="Age, height and weight" data-es="Edad, estatura y peso">Age, height and weight</small></span><span class="fl-profile-arrow" aria-hidden="true">⌄</span></summary><div class="fl-profile-inner">
 
 
 <div class="setup-grid">
@@ -274,7 +274,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <h3 data-en="TrainLab → Meal Program Preview" data-es="TrainLab → Vista previa de comidas">TrainLab → Meal Program Preview</h3>
 <p class="profile-muted" data-en="Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file." data-es="Programa de ejemplo basado en la plantilla semanal de TrainLab. Importa tu JSON localmente para actualizar la vista previa. No se sube tu archivo.">Sample training schedule based on the TrainLab weekly template. Import your own TrainLab JSON locally to replace the schedule preview. This does not upload your file.</p>
 <div class="week-buttons"><label for="trainlabImport" data-en="Import TrainLab JSON (on this device)" data-es="Importar JSON de TrainLab (en este dispositivo)">Import TrainLab JSON (on this device)</label><input type="file" id="trainlabImport" accept=".json,application/json" onchange="importTrainLabFile(this.files[0])"><button type="button" onclick="previewTrainingMeals()" data-en="Preview sample meal program" data-es="Ver programa de comidas de ejemplo">Preview sample meal program</button></div>
-<div id="trainingPlannerStatus" class="profile-muted" aria-live="polite"></div>
+<p class="profile-muted" data-active-goal></p><div id="trainingPlannerStatus" class="profile-muted" aria-live="polite"></div>
 <details class="fl-schedule-details" id="samplePreviewDetails"><summary data-en="View sample schedule details" data-es="Ver detalles del programa de ejemplo">View sample schedule details</summary><div id="trainingPlannerPreview" class="week-summary" aria-live="polite"></div></details>
 <p class="profile-muted" data-en="Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use." data-es="Solo demostración: las combinaciones y porciones NO se calculan con tus necesidades energéticas, alergias o antecedentes médicos. Los nutrientes preliminares no están validados para prescripciones. Revisa alimentos y porciones antes de usarlos.">Demonstration only: sample food combinations and portion sizes are NOT calculated from your energy needs, allergies, or medical history. Preliminary nutrients are not validated for nutrition prescriptions. Review foods and portions before use.</p>
 </div>
@@ -302,11 +302,11 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 <p class="profile-muted" data-en="Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here." data-es="Los datos futuros de producción deberán incluir fuente identificada, código del alimento, porción comestible, unidades, nutrientes, versión/fecha y revisión de alérgenos cuando corresponda. Aquí no se guardan datos personales.">Future production data must include a named source, food identifier, edible portion, units, nutrient values, version/date, and allergen review where relevant. No user data is saved here.</p>
 </details>
 </div></section>
-<footer>A1SC FUEL LAB · v1.3.12 TEST · 3B.15</footer>
+<footer>A1SC FUEL LAB · v1.3.14 TEST · 3B.19</footer>
 </main>
 <script>
 let language="en";
-function toggleLanguage(){language=language==="en"?"es":"en";document.documentElement.lang=language;document.querySelectorAll("[data-en][data-es]").forEach(el=>{el.textContent=el.dataset[language]});document.getElementById("languageButton").textContent=language==="en"?"ENG ▾":"ESP ▾";renderFoods();renderNutrientDemo();renderMealBuilder();renderWeek();renderTrainingPreview()}
+function toggleLanguage(){language=language==="en"?"es":"en";document.documentElement.lang=language;document.querySelectorAll("[data-en][data-es]").forEach(el=>{el.textContent=el.dataset[language]});document.getElementById("languageButton").textContent=language==="en"?"ENG ▾":"ESP ▾";renderFoods();renderNutrientDemo();renderMealBuilder();renderWeek();renderTrainingPreview();goalRender()}
 
 let bodyUnits='metric';
 try{if(localStorage.getItem('fuelLabUnits')==='us')setTimeout(()=>setBodyUnits('us'),0)}catch(e){}
@@ -349,7 +349,24 @@ function clearBodyProfile(){['bodyAge','bodyHeight','bodyWeight','bodyFat','body
 
 function showHome(){document.getElementById("weekScreen").hidden=true;document.getElementById("mealScreen").hidden=true;document.getElementById("profileScreen").hidden=true;document.getElementById("foodScreen").hidden=true;document.getElementById("homeScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
 function showProfile(){document.getElementById("weekScreen").hidden=true;document.getElementById("mealScreen").hidden=true;document.getElementById("foodScreen").hidden=true;document.getElementById("homeScreen").hidden=true;document.getElementById("profileScreen").hidden=false;window.scrollTo({top:0,behavior:"smooth"})}
-document.querySelectorAll("[data-goal]").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll("[data-goal]").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));const status=document.getElementById("goalStatus");const msg={en:"Sample goal selected.",es:"Objetivo de ejemplo seleccionado."};status.textContent=msg[language];status.dataset.en=msg.en;status.dataset.es=msg.es}));
+// 3B.19: a local goal preference, independent of health/profile demo fields.
+const GOAL_KEY='a1sc.fuellab.goal.v1';
+const goalLabels={general:{en:'Everyday wellness',es:'Bienestar diario'},performance:{en:'Athletic performance',es:'Rendimiento deportivo'},body:{en:'Body composition',es:'Composición corporal'}};
+const goalDescriptions={general:{en:'Balanced example combinations and variety.',es:'Combinaciones de ejemplo equilibradas y variadas.'},performance:{en:'Examples with carbohydrate-containing foods and recovery food choices.',es:'Ejemplos con alimentos con carbohidratos y opciones para la recuperación.'},body:{en:'Examples with varied protein foods, including eggs. No automatic calorie restriction.',es:'Ejemplos con proteínas variadas, incluidos huevos. Sin restricción calórica automática.'}};
+let selectedGoal=null,goalSaveFailed=false;
+try{const saved=localStorage.getItem(GOAL_KEY);if(Object.hasOwn(goalLabels,saved))selectedGoal=saved;}catch(_){}
+function goalName(g=selectedGoal||'general'){return goalLabels[g][language];}
+function goalRender(){
+ document.querySelectorAll('[data-goal]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.goal===selectedGoal)));
+ const summary=document.getElementById('goalSummary'),status=document.getElementById('goalStatus');
+ const set=(el,en,es)=>{el.dataset.en=en;el.dataset.es=es;el.textContent=el.dataset[language];};
+ if(selectedGoal){const n=goalLabels[selectedGoal];set(summary,n.en,n.es);const d=goalDescriptions[selectedGoal];set(status,d.en+' Applies to the next sample week. Saved meals stay unchanged.',d.es+' Se aplica a la próxima semana de ejemplo. Las comidas guardadas no cambian.');}
+ else {set(summary,'Wellness, performance or body composition','Bienestar, rendimiento o composición corporal');set(status,'No goal selected. New samples use the wellness example by default.','Sin objetivo seleccionado. Los nuevos ejemplos usan bienestar por defecto.');}
+ if(goalSaveFailed)set(status,'Could not save your goal. Previous selection kept.','No se pudo guardar tu objetivo. Se conservó la selección anterior.');
+ document.querySelectorAll('[data-active-goal]').forEach(el=>{el.textContent=(language==='en'?'Goal for next sample week: ':'Objetivo para la próxima semana de ejemplo: ')+goalName();});
+}
+document.querySelectorAll('[data-goal]').forEach(button=>button.addEventListener('click',()=>{const goal=button.dataset.goal;if(!Object.hasOwn(goalLabels,goal))return;try{localStorage.setItem(GOAL_KEY,goal);selectedGoal=goal;goalSaveFailed=false;trainingPreview=null;renderTrainingPreview();}catch(_){goalSaveFailed=true;}goalRender();}));
+goalRender();
 function reviewDemo(){
  const ids=["focusSelect","activitySelect","mealsSelect","foodSelect"];
  const chosen=ids.map(id=>document.getElementById(id));
@@ -512,7 +529,7 @@ function flEditor(){const ed=weekEditor;if(!ed)return null;const box=flEl('div',
  const feedback=flEl('div','fl-meal-feedback');feedback.id='flEditFeedback';feedback.setAttribute('aria-live','polite');box.append(feedback);const actions=flEl('div','fl-editor-actions');actions.append(flBtn(flText('Save','Guardar'),weekSaveEdit,'primary'),flBtn(flText('Cancel','Cancelar'),weekCancelEdit));if(ed.index>=0)actions.append(flBtn(flText('Remove','Quitar'),()=>removeWeekItem(ed.index)));box.append(actions);return box;}
 function renderWeek(){const screen=document.getElementById('weekScreen');if(!screen||screen.hidden)return;const tabs=document.getElementById('weekTabs');tabs.replaceChildren();weekDayNames[language].forEach((name,i)=>{const b=flBtn(name.slice(0,3),()=>{weekEditor=null;openMeal=null;weekMessage('','');selectWeekDay(i);},i===weekDay?'active':'');b.setAttribute('aria-label',name);b.setAttribute('aria-pressed',String(i===weekDay));tabs.append(b);});const out=document.getElementById('weekContents');out.replaceChildren();const fmt=v=>v.toLocaleString(language==='es'?'es-MX':'en-US',{maximumFractionDigits:0});const day=weekPlan[weekDay],total=weekTotals(day);
  const heading=flEl('div','fl-week-overview');heading.append(flEl('h3','',weekDayNames[language][weekDay]),flEl('span','',flText('Sample meal plan','Plan de ejemplo')));out.append(heading);
- if(!weekPlan.some(d=>d.length)){const empty=flEl('div','fl-empty-note',flText('No meals saved yet. Load an example menu or add foods to any meal.','No hay comidas guardadas. Carga un menú de ejemplo o agrega alimentos a cualquier comida.'));empty.append(flBtn(flText('Load example menu','Cargar menú de ejemplo'),()=>{previewTrainingMeals();}));out.append(empty);}
+ if(!weekPlan.some(d=>d.length)){const empty=flEl('div','fl-empty-note',flText('No meals saved yet. Load an example menu or add foods to any meal.','No hay comidas guardadas. Carga un menú de ejemplo o agrega alimentos a cualquier comida.'));empty.append(flBtn(confirmedTrainingSummary?flText('Load training-based examples','Cargar ejemplos según entrenamiento'):flText('Load example menu','Cargar menú de ejemplo'),()=>{previewTrainingMeals();}));out.append(empty);}
  for(const [k,slot] of mealSlots.entries()){const entries=day.map((e,i)=>({...e,index:i})).filter(e=>e.slot===slot),sum=weekTotals(entries),card=flEl('section','fl-meal-card');card.dataset.slot=slot;const expanded=openMeal===slot;const head=flBtn('',()=>{openMeal=expanded?null:slot;weekEditor=null;renderWeek();},'fl-meal-toggle');head.setAttribute('aria-expanded',String(expanded));head.setAttribute('aria-controls','fl-meal-'+slot);const tile=flEl('div','fl-meal-icon'+(entries.length?' has-food':''));tile.setAttribute('aria-hidden','true');if(entries.length){for(const e of entries.slice(0,4)){const mini=flEl('span','');mini.append(foodIcon(demoFoods[e.food]));tile.append(mini);}}else tile.textContent=weekSlotIcon(slot);
  const copy=flEl('div','fl-meal-copy');copy.append(flEl('strong','',mealNames[language][k]),flEl('small','',entries.length?entries.map(e=>shortFood(demoFoods[e.food])).join(' · '):flText('No foods scheduled','Sin alimentos programados')));if(entries.length)copy.append(flEl('small','fl-meal-energy','≈ '+fmt(sum.kcal)+' kcal'));head.append(tile,copy,flEl('span','',expanded?'▴':'▾'));card.append(head);
  const body=flEl('div','fl-meal-body');body.id='fl-meal-'+slot;body.hidden=!expanded;if(expanded){for(const e of entries){const food=demoFoods[e.food],line=flEl('div','fl-food-row');const pic=flEl('div','fl-food-pic');pic.append(foodIcon(food));pic.setAttribute('aria-hidden','true');const info=flEl('div');info.append(flEl('strong','',food[language]),flEl('small','',e.grams+' g · ≈ '+fmt(food.kcal*e.grams/100)+' kcal'));line.append(pic,info,flBtn(flText('Edit','Editar'),()=>weekEditItem(e.index)));body.append(line);if(weekEditor?.index===e.index&&weekEditor.slot===slot)body.append(flEditor());}if(weekEditor?.index===-1&&weekEditor.slot===slot)body.append(flEditor());else body.append(flBtn(flText('+ Add food','+ Agregar alimento'),()=>weekStartAdd(slot),'fl-add'));}card.append(body);out.append(card);}
@@ -523,7 +540,22 @@ function renderWeek(){const screen=document.getElementById('weekScreen');if(!scr
 // v1.3: local-only TrainLab import and non-prescriptive sample meal preview.
 const defaultTrainingDays=['strength','strength','endurance','strength','recovery','longride','recovery'];
 let trainingDays=defaultTrainingDays.slice(), trainingPreview=null, trainingSource='template', trainingFlags=[];
-const trainingLabels={en:{strength:'Strength',endurance:'Aerobic cycling',longride:'Long ride',recovery:'Recovery'},es:{strength:'Fuerza',endurance:'Ciclismo aeróbico',longride:'Ruta larga',recovery:'Recuperación'}};
+let confirmedTrainingSummary=null, schedulePending=false;
+// 3B.18: classify only validated scheduled disciplines. No energy or effort inference.
+function connectedDayType(day){
+ const strength=day.sessions.some(x=>x.discipline==='strength');
+ const endurance=day.sessions.some(x=>['cycle','run','swim','triathlon'].includes(x.discipline));
+ return strength&&endurance?'mixed':strength?'strength':endurance?'endurance':'recovery';
+}
+function setConnectedTraining(summary){
+ confirmedTrainingSummary=summary;
+ if(summary){trainingDays=summary.days.map(connectedDayType);trainingSource='connected';trainingPreview=null;}
+}
+function trainingDayLabel(type){
+ if(trainingSource==='connected'&&type==='recovery')return flText('No training scheduled','Sin entrenamiento programado');
+ return trainingLabels[language][type];
+}
+const trainingLabels={en:{strength:'Strength',endurance:'Endurance',mixed:'Strength + endurance',longride:'Long ride',recovery:'Recovery'},es:{strength:'Fuerza',endurance:'Resistencia',mixed:'Fuerza + resistencia',longride:'Ruta larga',recovery:'Recuperación'}};
 function trainingStatus(en,es){document.getElementById('trainingPlannerStatus').textContent=language==='es'?es:en}
 function classifyTrainingDay(day){
  const title=String(day.title||'').toLowerCase();const exercises=Array.isArray(day.exercises)?day.exercises:[];
@@ -534,6 +566,7 @@ function classifyTrainingDay(day){
 }
 async function importTrainLabFile(file){
  if(!file)return;
+ if(confirmedTrainingSummary||schedulePending){trainingStatus('Use the confirmed TRAIN LAB connection instead.','Usa la conexión confirmada de TRAIN LAB.');document.getElementById('trainlabImport').value='';return;}
  if(file.size>2*1024*1024){trainingStatus('File exceeds 2 MB limit.','El archivo excede 2 MB.');return}
  try{
  const obj=JSON.parse(await file.text());
@@ -541,6 +574,7 @@ async function importTrainLabFile(file){
  const weekdays=['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
  const mapped=weekdays.map(name=>obj.weeklyPlan.find(d=>String(d.weekday||'').toLowerCase()===name));
  if(mapped.some(d=>!d||!Array.isArray(d.exercises)))throw Error('week');
+ if(confirmedTrainingSummary||schedulePending)throw Error('connected');
  trainingDays=mapped.map(classifyTrainingDay);trainingSource='import';trainingPreview=null;
 
  const logs=Array.isArray(obj.loggedActivities)?obj.loggedActivities:[];
@@ -558,11 +592,32 @@ const exampleMenus={
  strength:[[['Oats dry',55],['Plain Greek yogurt nonfat',170],['Banana',100]],[['Chicken breast cooked skinless',130],['Brown rice cooked',160],['Broccoli raw',120]],[['Salmon cooked',130],['Sweet potato baked',180],['Spinach raw',80]],[['Apple with skin',150]]],
  endurance:[[['Oats dry',60],['Milk skim',200],['Banana',120]],[['Turkey breast roasted',120],['White rice cooked',180],['Carrot raw',100]],[['Black beans cooked',140],['Corn tortilla',80],['Tomato raw',100]],[['Plain Greek yogurt nonfat',170]]],
  longride:[[['Oats dry',65],['Banana',120],['Milk skim',200]],[['Chicken breast cooked skinless',130],['Pasta cooked',200],['Zucchini',120]],[['Salmon cooked',130],['White rice cooked',180],['Broccoli raw',120]],[['Apple with skin',150],['Plain Greek yogurt nonfat',170]]],
+ mixed:[[['Omelette, plain (no filling or added fat)',100],['Whole wheat bread',70],['Orange',150]],[['Chicken breast cooked skinless',130],['Brown rice cooked',160],['Broccoli raw',120]],[['Black beans cooked',140],['Corn tortilla',80],['Tomato raw',100]],[['Plain Greek yogurt nonfat',170]]],
  recovery:[[['Egg whole boiled',100],['Whole wheat bread',70],['Orange',150]],[['Lentils cooked',180],['Spinach raw',90],['Tomato raw',100]],[['Tilapia cooked',140],['Quinoa cooked',150],['Broccoli raw',120]],[['Plain yogurt whole milk',170]]]
 };
+// Fixed example alternatives, not dietary prescriptions or calculated energy targets.
+const goalMealOverrides={
+ performance:{
+  strength:{0:[['Oatmeal cooked with water',200],['Plain Greek yogurt nonfat',170],['Banana',120]],3:[['Whole wheat bread',70],['Peanut butter unsweetened',16]]},
+  endurance:{0:[['Oats dry',60],['Milk skim',200],['Blueberries',100]],3:[['Banana',120],['Plain Greek yogurt nonfat',170]]},
+  longride:{0:[['Whole wheat bread',70],['Scrambled eggs, plain (no added fat)',100],['Banana',120]],3:[['Orange',150],['Plain Greek yogurt nonfat',170]]},
+  mixed:{0:[['Omelette, plain (no filling or added fat)',100],['Whole wheat bread',70],['Banana',120]],3:[['Apple with skin',150],['Plain Greek yogurt nonfat',170]]},
+  recovery:{0:[['Oatmeal cooked with water',200],['Plain Greek yogurt nonfat',170],['Orange',150]],3:[['Apple with skin',150],['Plain yogurt whole milk',170]]}
+ },
+ body:{
+  strength:{0:[['Omelette, plain (no filling or added fat)',100],['Whole wheat bread',70],['Orange',150]],1:[['Beef sirloin grilled',130],['Brown rice cooked',160],['Broccoli raw',120]]},
+  endurance:{0:[['Scrambled eggs, plain (no added fat)',100],['Corn tortilla',80],['Banana',120]],2:[['Chicken breast cooked skinless',130],['Corn tortilla',80],['Tomato raw',100]]},
+  longride:{0:[['Omelette, plain (no filling or added fat)',100],['Whole wheat bread',70],['Banana',120]],1:[['Turkey breast roasted',130],['Pasta cooked',200],['Zucchini',120]]},
+  mixed:{0:[['Scrambled eggs, plain (no added fat)',100],['Whole wheat bread',70],['Orange',150]],2:[['Salmon cooked',130],['Corn tortilla',80],['Tomato raw',100]]},
+  recovery:{0:[['Omelette, plain (no filling or added fat)',100],['Whole wheat bread',70],['Orange',150]],1:[['Lentils cooked',180],['Spinach raw',90],['Tomato raw',100]],3:[['Plain Greek yogurt nonfat',170]]}
+ }
+};
+function exampleMenuFor(type,goal){const base=exampleMenus[type];const overrides=goalMealOverrides[goal]?.[type]||{};return base.map((meal,i)=>overrides[i]||meal);}
 function previewTrainingMeals(){
+ if(schedulePending){weekMessage('Confirm or cancel the received training schedule first.','Primero confirma o cancela el programa recibido.');return;}
+ if(confirmedTrainingSummary){trainingDays=confirmedTrainingSummary.days.map(connectedDayType);trainingSource='connected';}
  const slots=['breakfast','lunch','dinner','snack'];
- const proposed=trainingDays.map(type=>exampleMenus[type].flatMap((meal,i)=>meal.map(([name,grams])=>({slot:slots[i],food:demoFoodIndex(name),grams}))));
+ const proposed=trainingDays.map(type=>exampleMenuFor(type,selectedGoal||'general').flatMap((meal,i)=>meal.map(([name,grams])=>({slot:slots[i],food:demoFoodIndex(name),grams}))));
  if(proposed.flat().some(e=>e.food<0)||!validWeekPlan(proposed)){trainingStatus('Sample menu could not be built. No changes made.','No se pudo crear el menú. No hubo cambios.');return}
  trainingPreview=proposed;
  renderTrainingPreview();applyTrainingMeals();
@@ -572,7 +627,7 @@ function renderTrainingPreview(){
  const names=weekDayNames[language];
  trainingDays.forEach((type,i)=>{
   const section=document.createElement('section');section.style.cssText='padding:12px 0;border-bottom:1px solid rgba(255,255,255,.16)';
-  const title=document.createElement('strong');title.textContent=names[i]+' · '+trainingLabels[language][type];section.appendChild(title);
+  const title=document.createElement('strong');title.textContent=names[i]+' · '+trainingDayLabel(type);section.appendChild(title);
   if(trainingPreview){
    const entries=trainingPreview[i];
    mealSlots.forEach((slot,slotIndex)=>{
@@ -591,18 +646,19 @@ function renderTrainingPreview(){
 }
 function applyTrainingMeals(){
  if(!trainingPreview||!validWeekPlan(trainingPreview))return;
- // Never silently overwrite an existing edited plan. No confirmation is required for an empty week.
+ // A confirmed schedule is not permission to replace the meal plan.
  if(weekPlan.some(day=>day.length)){
-  trainingStatus('Your existing weekly meals were preserved. Clear the existing days before loading a new sample program.','Se conservaron las comidas actuales. Borra los días existentes antes de cargar un nuevo menú de ejemplo.');
-  document.getElementById('weekContents').scrollIntoView({block:'start',behavior:'smooth'});
-  return;
+  const context=trainingSource==='connected'&&confirmedTrainingSummary?flText('Training week: ','Semana de entrenamiento: ')+confirmedTrainingSummary.weekStart+' · ':'';
+  if(!confirm(flText('Replace all seven days of saved meals, including your edits, with sample menus? This cannot be undone.','¿Reemplazar los siete días de comidas guardadas, incluidos tus cambios, con menús de ejemplo? No se puede deshacer.')+'\n\n'+context+flText('Goal: ','Objetivo: ')+goalName())){weekMessage('Existing meals kept.','Se conservaron tus comidas.');return;}
  }
  const previous=weekPlan;
  weekPlan=trainingPreview.map(day=>day.map(e=>({...e})));
- if(!saveWeek()){weekPlan=previous;trainingStatus('Unable to save on this device.','No se pudo guardar en este dispositivo.');return}
+ if(!saveWeek()){weekPlan=previous;weekMessage('Unable to save. Existing meals kept.','No se pudo guardar. Se conservaron tus comidas.');return}
  weekDay=0;weekEditor=null;openMeal=null;document.getElementById('weekTools').open=false;
  trainingStatus('Sample meals loaded into My Week. Edit foods and portions below.','Comidas de ejemplo cargadas en Mi Semana. Edita los alimentos abajo.');
  renderWeek();
+ if(trainingSource==='connected'){const date=confirmedTrainingSummary.weekStart;weekMessage('Examples loaded for '+date+' · '+goalName()+'. Portions are not personalized.','Ejemplos cargados para '+date+' · '+goalName()+'. Las porciones no están personalizadas.');}
+ else weekMessage('Example menu loaded · '+goalName()+'. Portions are not personalized.','Menú de ejemplo cargado · '+goalName()+'. Las porciones no están personalizadas.');
  document.getElementById('weekContents').scrollIntoView({block:'start',behavior:'smooth'});
 }
 
@@ -642,21 +698,22 @@ checkSharedWeek();
   })};});return validate({schema:'a1sc.training-summary',version:1,source:'trainlab',weekStart:c.w,timezone:c.z,days});
  }
  const legacy=document.getElementById('trainingPlannerPanel');const panel=document.createElement('div');panel.id='tl-connected-schedule';panel.className='profile-panel';document.getElementById('weekConnectionMount').append(panel);
- let saved=null,pending=null,error=false,manual=false;try{saved=validate(JSON.parse(localStorage.getItem(KEY)));}catch(_){}
+ let saved=null,pending=null,error=false;try{saved=validate(JSON.parse(localStorage.getItem(KEY)));}catch(_){}
+ setConnectedTraining(saved);
  function add(tag,text,cls){const el=document.createElement(tag);el.textContent=text;if(cls)el.className=cls;panel.append(el);return el;}
  function render(){
-  panel.replaceChildren();const p=pending||saved;document.getElementById(pending||error?'weekConnectionMount':'weekSavedConnectionMount').append(panel);panel.hidden=!p&&!error;legacy.hidden=!!p&&!manual;legacy.style.display=legacy.hidden?'none':'';
+  schedulePending=!!pending;panel.replaceChildren();const p=pending||saved;document.getElementById(pending||error?'weekConnectionMount':'weekSavedConnectionMount').append(panel);panel.hidden=!p&&!error;legacy.hidden=!!p;legacy.style.display=legacy.hidden?'none':'';
   if(error)add('p',tr('Training schedule link could not be read. Existing data was preserved.','No se pudo leer el programa. Se conservaron los datos existentes.'),'profile-muted');
   if(!p)return;
   add('h3',pending?tr('Training schedule received','Programa de entrenamiento recibido'):tr('TRAIN LAB · Weekly schedule','TRAIN LAB · Programa semanal'));
   add('p',p.weekStart+' · '+p.timezone,'profile-muted');
   const schedule=document.createElement('details');schedule.className='fl-schedule-details';schedule.open=false;const scheduleTitle=document.createElement('summary');scheduleTitle.textContent=tr('View training week','Ver semana de entrenamiento');schedule.append(scheduleTitle);panel.append(schedule);for(const day of p.days){const row=document.createElement('div');row.style.cssText='padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12)';const name=document.createElement('strong');name.textContent=new Intl.DateTimeFormat(language,{weekday:'long',timeZone:'UTC'}).format(new Date(day.date+'T00:00:00Z'));row.append(name);const detail=document.createElement('div');detail.textContent=day.sessions.map(x=>{const parts=[labels[language][disciplines.indexOf(x.discipline)]];if(x.activityCount!==undefined)parts.push(String(x.activityCount)+' '+(x.activityCount===1?tr('activity','actividad'):tr('activities','actividades')));if(x.plannedMinutes!==null)parts.push(x.plannedMinutes+' min');if(x.intensity!=='unknown')parts.push(effortLabels[language][intensities.indexOf(x.intensity)]);return parts.join(' · ');}).join(' / ')||tr('No scheduled training','Sin entrenamiento programado');row.append(detail);schedule.append(row);}
-  add('p',tr('This schedule is training context only. Your existing meals are unchanged. Personalized nutrition planning is not yet enabled.','Este programa es solo contexto de entrenamiento. Tus comidas actuales no cambian. La planificación nutricional personalizada aún no está habilitada.'),'profile-muted');
-  if(pending){const controls=document.createElement('div');controls.className='week-buttons';const yes=document.createElement('button'),no=document.createElement('button');yes.type=no.type='button';yes.textContent=tr('Use this schedule','Usar este programa');no.textContent=tr('Cancel','Cancelar');yes.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(pending));saved=pending;pending=null;manual=false;document.getElementById('weekTools').open=false;render();if(!weekPlan.some(d=>d.length))document.getElementById('weekContents').scrollIntoView({block:'start'});}catch(_){alert(tr('Unable to save. Previous schedule preserved.','No se pudo guardar. Programa anterior conservado.'));}};no.onclick=()=>{pending=null;manual=false;render();};controls.append(yes,no);panel.append(controls);}
-  else{const actions=document.createElement('div');actions.className='fl-schedule-action';const toggle=flBtn(manual?tr('Hide sample tools','Ocultar herramientas de ejemplo'):tr('Show sample tools','Mostrar herramientas de ejemplo'),()=>{manual=!manual;render();document.getElementById('weekTools').open=manual;if(manual)document.getElementById('weekTools').scrollIntoView({block:'start'});});actions.append(toggle);if(!weekPlan.some(d=>d.length))actions.append(flBtn(tr('Preview sample meal plan','Ver plan de comidas de ejemplo'),()=>previewTrainingMeals(),'primary'));panel.append(actions);}
+  add('p',tr('Sample menus can use the scheduled disciplines. Duration, intensity and individual nutritional needs do not change portions yet. Existing meals stay unchanged until you choose to build a new week.','Los menús de ejemplo pueden usar las disciplinas programadas. La duración, intensidad y necesidades individuales aún no modifican las porciones. Tus comidas no cambian hasta que elijas crear una semana nueva.'),'profile-muted');
+  if(pending){const controls=document.createElement('div');controls.className='week-buttons';const yes=document.createElement('button'),no=document.createElement('button');yes.type=no.type='button';yes.textContent=tr('Use this schedule','Usar este programa');no.textContent=tr('Cancel','Cancelar');yes.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(pending));saved=pending;pending=null;setConnectedTraining(saved);document.getElementById('weekTools').open=false;render();renderWeek();renderTrainingPreview();if(!weekPlan.some(d=>d.length)){weekMessage('Schedule saved. Load training-based examples below.','Programa guardado. Carga los ejemplos según entrenamiento abajo.');document.getElementById('weekContents').scrollIntoView({block:'start'});}else weekMessage('Schedule saved; existing meals kept. Open Plan tools to build a new sample week.','Programa guardado; comidas conservadas. Abre Herramientas para crear una nueva semana de ejemplo.');}catch(_){alert(tr('Unable to save. Previous schedule preserved.','No se pudo guardar. Programa anterior conservado.'));}};no.onclick=()=>{pending=null;render();renderWeek();};controls.append(yes,no);panel.append(controls);}
+  else{const goalLine=add('p',tr('Goal for next sample week: ','Objetivo para la próxima semana de ejemplo: ')+goalName(),'profile-muted');goalLine.dataset.activeGoal='';const actions=document.createElement('div');actions.className='fl-schedule-action';actions.append(flBtn(tr('Build training-based sample week','Crear semana de ejemplo según entrenamiento'),()=>previewTrainingMeals(),'primary'));panel.append(actions);}
  }
  document.getElementById('languageButton').addEventListener('click',()=>queueMicrotask(render));
- function receive(){const hash=location.hash;if(!hash.startsWith(PREFIX))return;try{history.replaceState(null,'',location.pathname+location.search);pending=decode(hash);error=false;manual=false;}catch(_){pending=null;error=true;}showWeek();render();panel.scrollIntoView({block:'start'});}
+ function receive(){const hash=location.hash;if(!hash.startsWith(PREFIX))return;try{history.replaceState(null,'',location.pathname+location.search);pending=decode(hash);error=false;}catch(_){pending=null;error=true;}schedulePending=!!pending;showWeek();render();panel.scrollIntoView({block:'start'});}
  window.addEventListener('hashchange',receive);render();receive();
 })();
 
