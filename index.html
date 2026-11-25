@@ -378,7 +378,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 #nutritionModelContents .fl-nut-controls .fl-nut-session{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;align-items:start}
 #nutritionModelContents .fl-nut-controls .fl-nut-session img{width:48px;height:52px;object-fit:contain;border-radius:7px;background:#10253b}
 </style>
-<footer>A1SC FUEL LAB · v1.3.44 TEST · 3B.39C</footer>
+<footer>A1SC FUEL LAB · v1.3.45 TEST · 3B.40</footer>
 </main>
 <script>
 let language="en";
@@ -624,18 +624,32 @@ function flEditor(){const ed=weekEditor;if(!ed)return null;let refreshPractical=
  const feedback=flEl('div','fl-meal-feedback');feedback.id='flEditFeedback';feedback.setAttribute('aria-live','polite');box.append(feedback);const actions=flEl('div','fl-editor-actions');actions.append(flBtn(flText('Save','Guardar'),weekSaveEdit,'primary'),flBtn(flText('Cancel edit','Cancelar edición'),weekCancelEdit));if(ed.index>=0)actions.append(flBtn(flText('Remove','Quitar'),()=>removeWeekItem(ed.index)));box.append(actions);return box;}
 function practicalPortion(food,grams){const u=quantityUnit(food);return u&&Number.isFinite(grams)&&grams>0?' · ≈ '+quantityText(u,quantityCount(u,grams)):'';}
 // 3B.39C: estimated planned amounts and data coverage, never adequacy scores.
+// Adult DRI reference comparison, not a diagnosis or prescription.
+// Health Canada DRI tables: reference-values-elements, reference-values-vitamins,
+// reference-values-macronutrients. RDA/AI are usual intake references, not daily minima.
+function adultNutrientReferences(p,state){
+ if(state!=='no-reported-concerns'||!p||!Number.isInteger(p.age)||p.age<19||p.age>78||!['male','female'].includes(p.reference))return null;
+ const a=p.age,m=p.reference==='male';
+ return {fiber:[m?(a<=50?38:30):(a<=50?25:21),'AI'],calcium:[a>70||(!m&&a>50)?1200:1000,'RDA'],iron:[!m&&a<=50?18:8,'RDA'],magnesium:[m?(a<=30?400:420):(a<=30?310:320),'RDA'],potassium:[m?3400:2600,'AI'],sodium:[1500,'AI'],zinc:[m?11:8,'RDA'],selenium:[55,'RDA'],vitaminA:[m?900:700,'RDA'],vitaminC:[m?90:75,'RDA'],vitaminD:[a>70?20:15,'RDA'],vitaminE:[15,'RDA'],vitaminB6:[a<=50?1.3:m?1.7:1.5,'RDA'],vitaminB12:[2.4,'RDA']};
+}
+function nutrientComparison(t,ref){if(!ref||!t||t.value===null||!Number.isFinite(t.value))return null;return Math.max(0,t.value/ref[0]*100);}
 function renderDailyNutrientReview(entries){
  const card=flEl('details','fl-daily-nutrient');card.append(flEl('summary','',flText('Daily nutrient review','Revisión de nutrientes del día')));
- const totals=referenceDayTotals(entries);if(!totals){card.append(flEl('p','profile-muted',flText('Add foods to see estimated nutrients.','Agrega alimentos para ver los nutrientes estimados.')));return card;}
+ const refs=adultNutrientReferences(bodyRecord.value,safetyState());const totals=referenceDayTotals(entries);if(!totals){card.append(flEl('p','profile-muted',flText('Add foods to see estimated nutrients.','Agrega alimentos para ver los nutrientes estimados.')));return card;}
  const matched=entries.filter(e=>foodReferencePortion(e.food,e.grams)?.record).length;
  card.append(flEl('p','fl-review-mini-note',flText('Planned meals · USDA generic estimates, not actual intake or a nutritional adequacy assessment.','Comidas planeadas · Estimaciones genéricas USDA, no consumo real ni evaluación de suficiencia nutricional.')));
  const coverage=flEl('div','fl-daily-coverage');coverage.append(flEl('strong','',flText('Food reference coverage','Cobertura de referencias')),flEl('span','',matched+' / '+entries.length+' '+flText('portions','porciones')));card.append(coverage);
+ card.append(flEl('p','fl-review-mini-note',refs?flText('Adult usual-intake references (RDA / AI). One planned day cannot establish adequacy.','Referencias de consumo habitual en adultos (RDA / AI). Un día planeado no establece suficiencia.'):flText('Reference comparison unavailable: complete eligible adult profile and safety screening.','Comparación no disponible: completa el perfil adulto elegible y la revisión de seguridad.')));
  const fmt=n=>n.toLocaleString(language==='es'?'es-MX':'en-US',{maximumFractionDigits:2});
  const icons=['Apple with skin','Milk whole','Chicken breast cooked skinless','Almonds','Banana','White rice cooked'];
- function group(parent,fields,withIcons){const grid=flEl('div','fl-daily-grid');for(const [i,[key,en,es,unit]] of fields.entries()){const t=totals[key],tile=flEl('div','fl-daily-tile');const head=flEl('div','fl-daily-head');const f=withIcons?demoFoods[demoFoodIndex(icons[i])]:null;if(f)head.append(foodIcon(f));head.append(flEl('span','',flText(en,es)));tile.append(head);tile.append(flEl('strong','',t.knownSubtotal===null?'—':(t.value===null?'≥ ':'≈ ')+fmt(t.knownSubtotal)+' '+unit));const bar=flEl('div','fl-daily-track'),fill=flEl('div','fl-daily-fill');fill.style.width=(100*t.known/t.count)+'%';bar.append(fill);tile.append(bar,flEl('small','',t.known+' / '+t.count+' '+flText('portions with data','porciones con datos')));grid.append(tile);}parent.append(grid);}
+ function group(parent,fields,withIcons){const grid=flEl('div','fl-daily-grid');for(const [i,[key,en,es,unit]] of fields.entries()){const t=totals[key],tile=flEl('div','fl-daily-tile');const head=flEl('div','fl-daily-head');const f=withIcons?demoFoods[demoFoodIndex(icons[i])]:null;if(f)head.append(foodIcon(f));head.append(flEl('span','',flText(en,es)));tile.append(head);tile.append(flEl('strong','',t.knownSubtotal===null?'—':(t.value===null?'≥ ':'≈ ')+fmt(t.knownSubtotal)+' '+unit));const bar=flEl('div','fl-daily-track'),fill=flEl('div','fl-daily-fill');fill.style.width=(100*t.known/t.count)+'%';bar.append(fill);tile.append(bar,flEl('small','',t.known+' / '+t.count+' '+flText('portions with data','porciones con datos')));const ref=refs?.[key];const pct=nutrientComparison(t,ref);
+ if(ref){tile.append(flEl('small','',flText('Usual intake reference: ','Referencia de consumo habitual: ')+fmt(ref[0])+' '+unit+' · '+ref[1]));if(pct!==null){const rt=flEl('div','fl-daily-track'),rf=flEl('div','fl-daily-fill');rf.style.background='#a7a0f5';rf.style.width=Math.min(100,pct)+'%';rt.append(rf);tile.append(rt,flEl('small','',fmt(pct)+'% '+flText('of reference','de referencia')));}else tile.append(flEl('small','',flText('Comparison unavailable: incomplete data','Comparación no disponible: datos incompletos')));}
+ if(key==='folate')tile.append(flEl('small','',flText('Total folate is not equivalent to dietary folate equivalents (DFE).','Folato total no equivale a equivalentes de folato dietético (DFE).')));
+ if(key==='sodium'&&refs)tile.append(flEl('small','',flText('2,300 mg/day: chronic disease risk reduction reference, not a UL or exercise replacement dose.','2,300 mg/día: referencia de reducción de riesgo crónico, no límite superior ni dosis de reposición deportiva.')));
+ grid.append(tile);}parent.append(grid);}
  group(card,referenceNutrients.slice(0,6),true);
  const more=flEl('details','fl-daily-more');more.append(flEl('summary','',flText('More minerals and vitamins','Más minerales y vitaminas')));group(more,referenceNutrients.slice(6),false);card.append(more);
- card.append(flEl('p','fl-review-mini-note',flText('Bars indicate data coverage, not progress toward a nutrient target. ≥ means known subtotal only; missing values are not zero. Food illustrations are decorative, not recommendations.','Las barras indican cobertura de datos, no avance hacia una meta nutricional. ≥ indica solo el subtotal conocido; los datos faltantes no son cero. Las ilustraciones son decorativas, no recomendaciones.')));
+ card.append(flEl('p','fl-review-mini-note',flText('Blue bars show data coverage; purple bars compare complete estimates to usual-intake references. No upper-limit or deficiency assessment. ≥ means known subtotal only; missing values are not zero. Food illustrations are decorative, not recommendations.','Barras azules: cobertura de datos; moradas: comparación de estimaciones completas con referencias habituales. Sin evaluación de límites superiores ni deficiencias. ≥ indica solo el subtotal conocido; los datos faltantes no son cero. Las ilustraciones son decorativas, no recomendaciones.')));
  const unknown=[...new Set(entries.filter(e=>!foodReferencePortion(e.food,e.grams)?.record).map(e=>demoFoods[e.food][language]))];if(unknown.length){const missing=flEl('details','fl-daily-more');missing.append(flEl('summary','',flText('Foods without reference data','Alimentos sin datos de referencia')));for(const name of unknown)missing.append(flEl('p','profile-muted',name));card.append(missing);}
  return card;
 }
