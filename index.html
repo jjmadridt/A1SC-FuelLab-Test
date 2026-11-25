@@ -326,7 +326,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 .fl-review-mini-note{display:block;font-size:11px;color:#b9cddd;margin-top:8px;overflow-wrap:anywhere}
 @media(max-width:520px){.fl-review-card-head{grid-template-columns:68px minmax(0,1fr);gap:8px}.fl-review-icon{width:68px;height:88px;font-size:32px}.fl-review-stat-grid{grid-template-columns:1fr}.fl-review-card-change{font-size:17px}}
 @media(max-width:370px){#progressContents .fl-training-panel{padding:9px}#progressContents .fl-training-panel .fl-progress-group{padding:6px}#progressContents .fl-progress-card{padding:8px}#progressContents .fl-progress-card-head{grid-template-columns:68px minmax(0,1fr);gap:8px}#progressContents .fl-progress-photo{width:68px;height:88px}#progressContents .fl-progress-card-change{font-size:17px}#progressContents .fl-progress-card-name{font-size:15px}}
-</style><footer>A1SC FUEL LAB · v1.3.32 TEST · 3B.33</footer>
+</style><footer>A1SC FUEL LAB · v1.3.33 TEST · 3B.34</footer>
 </main>
 <script>
 let language="en";
@@ -762,6 +762,35 @@ function reviewMacroFit(entries,model){
  totals=weekTotals(draft);if(!draft.every(validWeekItem)||score(totals)>initial+1e-8)return null;
  return {draft,totals,initialScore:initial,score:score(totals)};
 }
+// Review-only expansion: bounded candidate search, never modifies saved meals.
+function reviewExpandedFit(entries,model){
+ if(!model||model.status!=='complete'||!Array.isArray(entries)||!entries.length||entries.length>40||!entries.every(validWeekItem))return null;
+ const keys=['kcal','protein','carbs','fat'],targets={kcal:model.energy,protein:model.protein,carbs:model.carbs,fat:model.fat};
+ if(keys.some(k=>!Number.isFinite(targets[k])||targets[k]<=0))return null;
+ const score=t=>keys.reduce((n,k)=>n+(k==='kcal'?2:1)*((t[k]-targets[k])/targets[k])**2,0);
+ const within=t=>keys.every(k=>Math.abs(t[k]-targets[k])/targets[k]<=.10);
+ let base=entries.map(e=>({...e})),fit=reviewMacroFit(base,model),added=0;
+ // Fixed illustrative candidate portions, not nutritional prescriptions. Exclude less-preferred new foods.
+ const candidates=[[2,118],[3,182],[4,131],[26,160],[27,160],[30,56],[32,56],[34,140],[37,100],[46,100],[48,130],[56,170],[64,75],[65,28],[68,16],[73,234]];
+ if(model.energy<weekTotals(base).kcal*.5)return null;
+ for(let pass=0;pass<4;pass++){
+  if(fit&&within(fit.totals))break;
+  let best=null;const oldScore=fit?fit.score:score(weekTotals(base));
+  for(const [food,grams] of candidates){
+   const preference=foodPreference(demoFoods[food].en);if(preference<0||base.some(e=>e.food===food))continue;
+   const slot=[26,27,34,37,48].includes(food)?'lunch':'snack';
+   const trial=[...base,{slot,food,grams}],f=reviewMacroFit(trial,model);
+   // If still below the fit's scaling limit, evaluate the maximum bounded energy as an intermediate step.
+   const provisional=weekTotals(trial.map(e=>({...e,grams:Math.min(2000,e.grams*2)})));
+   const cost=f?f.score:score(provisional);const rank=cost+(preference>0?0:.0001);
+   if(!best||rank<best.rank)best={trial,f,cost,rank};
+  }
+  if(!best||fit&&(!best.f||best.cost>=oldScore-1e-8))break;
+  if(!best.f&&weekTotals(best.trial).kcal<=weekTotals(base).kcal)break;
+  base=best.trial;fit=best.f;added++;
+ }
+ return fit?{...fit,base,added,within:within(fit.totals)}:null;
+}
 // Practical alternative: bounded search over existing approximate serving increments.
 function reviewPracticalFit(entries,model,fit){
  if(!fit||model.status!=='complete')return null;
@@ -850,30 +879,31 @@ function renderNutritionModel(){
   {label:flText('Fat','Grasa'),value:n(m.fat)+' g',amount:m.fat}
  ],Math.max(m.protein,m.carbs,m.fat,1));
  macroCard.append(flEl('small','fl-review-mini-note',flText('Assumptions: resting-energy equation, broad non-training activity factors and illustrative intensity bands. This is not measured expenditure, a prescribed macro target, or an automatic deficit.','Supuestos: ecuación de energía en reposo, factores amplios de actividad no deportiva y rangos ilustrativos de intensidad. No es gasto medido, ni una meta prescrita de macros, ni un déficit automático.')));
- const draft=reviewMacroFit(weekPlan[weekDay],m);
+ const draft=reviewExpandedFit(weekPlan[weekDay],m);
  if(!draft){
   const card=makeCard('📝',flText('Draft meal fit','Ajuste preliminar de comidas'),flText('No meal changes have been applied','No se han aplicado cambios a las comidas'),flText('Draft unavailable','Borrador no disponible'),flText('No draft portions available yet','Aún no hay porciones preliminares'));
-  card.append(flEl('small','fl-review-mini-note',!weekPlan[weekDay].length?flText('No saved foods for this day.','No hay alimentos guardados para este día.'):current.kcal>0&&(m.energy/current.kcal>2||m.energy/current.kcal<.5)?flText('The current menu would require scaling beyond 0.5–2 times its original energy. Adding foods is not yet supported by this review optimizer.','El menú requiere un ajuste fuera de 0.5–2 veces su energía original. Este optimizador aún no agrega alimentos.'):flText('No valid draft within current review limits.','No hay un borrador válido dentro de los límites de revisión.')));
+  card.append(flEl('small','fl-review-mini-note',!weekPlan[weekDay].length?flText('No saved foods for this day.','No hay alimentos guardados para este día.'):current.kcal>0&&(m.energy/current.kcal>2||m.energy/current.kcal<.5)?flText('The current menu would require scaling beyond 0.5–2 times its original energy. No expanded draft fits the bounded review limits.','El menú requiere un ajuste fuera de 0.5–2 veces su energía original. Ningún borrador ampliado cumple los límites de revisión.'):flText('No valid draft within current review limits.','No hay un borrador válido dentro de los límites de revisión.')));
   return;
  }
  const diffK=Math.round(draft.totals.kcal-m.energy),diffP=Math.round(draft.totals.protein-m.protein),diffC=Math.round(draft.totals.carbs-m.carbs),diffF=Math.round(draft.totals.fat-m.fat);
- const draftCard=makeCard('📋',flText('Draft meal fit','Ajuste preliminar de comidas'),flText('Saved meals stay unchanged','Las comidas guardadas no cambian'),n(draft.totals.kcal)+' kcal',flText('Current meals scaled for review only','Comidas actuales ajustadas solo para revisión'));
+ const draftCard=makeCard('📋',flText('Draft meal fit','Ajuste preliminar de comidas'),flText('Saved meals stay unchanged','Las comidas guardadas no cambian'),n(draft.totals.kcal)+' kcal',draft.added?flText('Expanded draft · ','Borrador ampliado · ')+draft.added+flText(' additional foods',' alimentos adicionales'):flText('Current meals scaled for review only','Comidas actuales ajustadas solo para revisión'));
  addStatGrid(draftCard,[
   {value:n(draft.totals.protein)+' g',label:flText('Protein total','Proteína total')},
   {value:n(draft.totals.carbs)+' g',label:flText('Carb total','Carbohidratos totales')},
   {value:n(draft.totals.fat)+' g',label:flText('Fat total','Grasa total')}
  ]);
+ draftCard.append(flEl('small','fl-review-mini-note',draft.within?flText('Within 10% of all four test values (mathematical tolerance only).','Dentro del 10% de los cuatro valores de prueba (solo tolerancia matemática).'):flText('Outside 10% of at least one test value. Further review needed.','Fuera del 10% de al menos un valor de prueba. Requiere revisión.')));
  draftCard.append(flEl('small','fl-review-mini-note',flText('Difference from the test scenario: ','Diferencia respecto al escenario de prueba: ')+diffK+' kcal · '+diffP+' g '+flText('protein','proteína')+' · '+diffC+' g '+flText('carbs','carbohidratos')+' · '+diffF+' g '+flText('fat','grasa')));
  const details=addDetails(draftCard,flText('View meal-by-meal draft','Ver borrador por comida'));
  for(const [i,slot] of mealSlots.entries()){
   const foods=draft.draft.filter(e=>e.slot===slot);if(!foods.length)continue;
   const day=flEl('div','fl-review-draft-day');day.append(flEl('strong','',mealNames[language][i]));
-  for(const e of foods)day.append(flEl('span','',demoFoods[e.food][language]+' · '+e.grams+' g'));
+  for(const e of foods)day.append(flEl('span','',demoFoods[e.food][language]+' · '+e.grams+' g'+(!weekPlan[weekDay].some(x=>x.food===e.food)?flText(' · Added for review',' · Añadido para revisión'):'')));
   details.append(day);
  }
  details.append(flEl('small','fl-review-mini-note',flText('This bounded mathematical fit considers energy and all three macros, but it does not validate serving sizes, micronutrients, allergies or clinical suitability.','Este ajuste matemático limitado considera la energía y los tres macros, pero no valida porciones, micronutrientes, alergias ni idoneidad clínica.')));
- const practical=reviewPracticalFit(weekPlan[weekDay],m,draft);
- const alt=makeCard('🥗',flText('Practical portion alternative','Alternativa práctica de porciones'),flText('Uses existing foods only','Usa solo los alimentos actuales'),practical?n(practical.totals.kcal)+' kcal':flText('No practical fit','Sin ajuste práctico'),practical?(practical.within?flText('Within 10% of the four test values','Dentro del 10% de los cuatro valores de prueba'):flText('Outside 10% on at least one value','Fuera del 10% en al menos un valor')):flText('Review only','Solo revisión'));
+ const practical=reviewPracticalFit(draft.base,m,draft);
+ const alt=makeCard('🥗',flText('Practical portion alternative','Alternativa práctica de porciones'),flText('Uses foods from the review draft','Usa alimentos del borrador de revisión'),practical?n(practical.totals.kcal)+' kcal':flText('No practical fit','Sin ajuste práctico'),practical?(practical.within?flText('Within 10% of the four test values','Dentro del 10% de los cuatro valores de prueba'):flText('Outside 10% on at least one value','Fuera del 10% en al menos un valor')):flText('Review only','Solo revisión'));
  if(practical){
   addStatGrid(alt,[{value:n(practical.totals.protein)+' g',label:flText('Protein total','Proteína total')},{value:n(practical.totals.carbs)+' g',label:flText('Carb total','Carbohidratos totales')},{value:n(practical.totals.fat)+' g',label:flText('Fat total','Grasa total')}]);
   const pdetails=addDetails(alt,flText('View practical portions','Ver porciones prácticas'));
