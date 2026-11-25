@@ -1,5 +1,5 @@
 // Fuel Lab: explicit update approval, fresh navigation and version-scoped fallback.
-const CACHE = 'fuel-lab-pwa-v157-profile-safety';
+const CACHE = 'fuel-lab-pwa-v159-nutrition-model';
 const ASSETS = ['./icon-192.png','./icon-512.png','./manifest.webmanifest'];
 const PAGE = new URL('./index.html',self.registration.scope).href;
 self.addEventListener('install',event => {event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(asset=>new Request(asset,{cache:'reload'})))));});
