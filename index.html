@@ -362,7 +362,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 #nutritionModelContents .fl-nut-controls .fl-nut-session{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;align-items:start}
 #nutritionModelContents .fl-nut-controls .fl-nut-session img{width:48px;height:52px;object-fit:contain;border-radius:7px;background:#10253b}
 </style>
-<footer>A1SC FUEL LAB · v1.3.34 TEST · 3B.34.1</footer>
+<footer>A1SC FUEL LAB · v1.3.35 TEST · 3B.35</footer>
 </main>
 <script>
 let language="en";
@@ -739,7 +739,7 @@ function reviewNutritionModel(p,screening,summary,goal,day,now=new Date()){
  // Illustrative model assumptions for review: no goal-driven energy deficit. Macro arithmetic, not a prescription.
  const protein=p.kg*(goal==='body'||goal==='performance'||sessions.length?1.6:1.2),fat=energy*.30/9,carbs=(energy-4*protein-9*fat)/4;
  if(!Number.isFinite(energy)||energy>6000||carbs<0)return {...result,status:'review'};
- return {status:'complete',rmr,lean,low,high,energy,protein,fat,carbs,minutes:totalMinutes,date:summary.days[day].date,uncertain,rest:sessions.length===0};
+ return {status:'complete',rmr,lean,low,high,energy,protein,fat,carbs,minutes:totalMinutes,date:summary.days[day].date,uncertain,rest:sessions.length===0,dayType:connectedDayType(summary.days[day])};
 }
 // 3B.29: review context only; dated observations are not energy-expenditure estimates.
 function reviewProgressContext(profile,snapshot,warning,now=new Date()){
@@ -777,6 +777,16 @@ function appendReviewContext(panel){
  panel.append(details);
 }
 // Fit a bounded draft to the existing unvalidated test scenario. No food or saved plan is changed.
+// 3B.35: illustrative meal allocation, not a timing prescription. No session clock times are available.
+function reviewMealShares(model){const type=model.dayType||'recovery';return {strength:[.25,.30,.30,.15],endurance:[.25,.30,.25,.20],mixed:[.25,.25,.30,.20],recovery:[.30,.30,.30,.10]}[type]||[.25,.30,.30,.15];}
+function reviewMealDistribution(entries,model){const shares=reviewMealShares(model);return mealSlots.map((slot,i)=>({slot,share:shares[i],...weekTotals(entries.filter(e=>e.slot===slot))}));}
+function reviewDistributionCost(entries,model){return reviewMealDistribution(entries,model).reduce((n,x)=>n+((x.kcal/model.energy-x.share)**2)+.5*((x.protein/model.protein-x.share)**2),0);}
+function reviewDailyCost(t,model){return ['kcal','protein','carbs','fat'].reduce((n,k)=>{const target=k==='kcal'?model.energy:model[k];return n+(k==='kcal'?2:1)*((t[k]-target)/target)**2;},0);}
+// Refine only within original bounds; reject candidates that materially worsen the daily fit.
+function reviewRedistribute(entries,model,fit,practical=false){if(!fit)return null;const draft=fit.draft.map(e=>({...e}));const initial=reviewDailyCost(weekTotals(draft),model),cap=initial+.002;let best=initial+.2*reviewDistributionCost(draft,model);
+ const options=entries.map((e,i)=>{const lo=Math.max(1,Math.ceil(e.grams*.5)),hi=Math.min(2000,e.grams*2);if(!practical)return {lo,hi};const u=quantityUnit(e.food),step=u&&u[0]*u[5],choices=[];if(step>0)for(let j=1;j<=Math.ceil(hi/step);j++){const g=Math.round(j*step);if(g>=lo&&g<=hi&&!choices.includes(g))choices.push(g);}return {lo,hi,choices};});
+ for(const step of (practical?[1]:[25,10,5,1]))for(let pass=0;pass<4;pass++){let changed=false;for(let i=0;i<draft.length;i++){const e=draft[i],o=options[i],old=e.grams,choices=practical?o.choices:[Math.max(o.lo,old-step),Math.min(o.hi,old+step)];let chosen=old;for(const g of choices){e.grams=g;const daily=reviewDailyCost(weekTotals(draft),model),cost=daily+.2*reviewDistributionCost(draft,model);if(daily<=cap&&cost+1e-10<best){best=cost;chosen=g;changed=true;}}e.grams=chosen;}if(!changed)break;}
+ const totals=weekTotals(draft);return {...fit,draft,totals,score:reviewDailyCost(totals,model),within:['kcal','protein','carbs','fat'].every(k=>Math.abs(totals[k]-(k==='kcal'?model.energy:model[k]))/(k==='kcal'?model.energy:model[k])<=.1)};}
 function reviewMacroFit(entries,model){
  if(!model||model.status!=='complete'||!Array.isArray(entries)||!entries.length||!entries.every(validWeekItem))return null;
  const keys=['kcal','protein','carbs','fat'],targets={kcal:model.energy,protein:model.protein,carbs:model.carbs,fat:model.fat};
@@ -807,14 +817,14 @@ function reviewExpandedFit(entries,model){
  const within=t=>keys.every(k=>Math.abs(t[k]-targets[k])/targets[k]<=.10);
  let base=entries.map(e=>({...e})),fit=reviewMacroFit(base,model),added=0;
  // Fixed illustrative candidate portions, not nutritional prescriptions. Exclude less-preferred new foods.
- const candidates=[[2,118],[3,182],[4,131],[26,160],[27,160],[30,56],[32,56],[34,140],[37,100],[46,100],[48,130],[56,170],[64,75],[65,28],[68,16],[73,234]];
+ const candidates=[[2,118],[3,182],[4,131],[5,120],[15,100],[29,150],[38,130],[42,130],[26,160],[27,160],[30,56],[32,56],[34,140],[37,100],[46,100],[48,130],[56,170],[64,75],[65,28],[68,16],[73,234]];
  if(model.energy<weekTotals(base).kcal*.5)return null;
  for(let pass=0;pass<4;pass++){
   if(fit&&within(fit.totals))break;
   let best=null;const oldScore=fit?fit.score:score(weekTotals(base));
   for(const [food,grams] of candidates){
    const preference=foodPreference(demoFoods[food].en);if(preference<0||base.some(e=>e.food===food))continue;
-   const slot=[26,27,34,37,48].includes(food)?'lunch':'snack';
+   const allowed=[26,27,34,37,48,15,29,38,42].includes(food)?['lunch','dinner']:['breakfast','snack'];const distribution=reviewMealDistribution(fit?fit.draft:base,model);const slot=distribution.filter(x=>allowed.includes(x.slot)).sort((a,b)=>(a.kcal/model.energy-a.share)-(b.kcal/model.energy-b.share))[0].slot;
    const trial=[...base,{slot,food,grams}],f=reviewMacroFit(trial,model);
    // If still below the fit's scaling limit, evaluate the maximum bounded energy as an intermediate step.
    const provisional=weekTotals(trial.map(e=>({...e,grams:Math.min(2000,e.grams*2)})));
@@ -825,7 +835,7 @@ function reviewExpandedFit(entries,model){
   if(!best.f&&weekTotals(best.trial).kcal<=weekTotals(base).kcal)break;
   base=best.trial;fit=best.f;added++;
  }
- return fit?{...fit,base,added,within:within(fit.totals)}:null;
+ return fit?reviewRedistribute(base,model,{...fit,base,added,within:within(fit.totals)}):null;
 }
 // Practical alternative: bounded search over existing approximate serving increments.
 function reviewPracticalFit(entries,model,fit){
@@ -925,6 +935,7 @@ function renderNutritionModel(){
  draftCard.append(flEl('small','fl-review-mini-note',draft.within?flText('Within 10% of all four test values (mathematical tolerance only).','Dentro del 10% de los cuatro valores de prueba (solo tolerancia matemática).'):flText('Outside 10% of at least one test value. Further review needed.','Fuera del 10% de al menos un valor de prueba. Requiere revisión.')));
  draftCard.append(flEl('small','fl-review-mini-note',flText('Difference from the test scenario: ','Diferencia respecto al escenario de prueba: ')+diffK+' kcal · '+diffP+' g '+flText('protein','proteína')+' · '+diffC+' g '+flText('carbs','carbohidratos')+' · '+diffF+' g '+flText('fat','grasa')));
  const details=addDetails(draftCard,flText('View meal-by-meal draft','Ver borrador por comida'));
+ const distribution=addDetails(draftCard,flText('Meal distribution','Distribución de comidas'));for(const [i,x] of reviewMealDistribution(draft.draft,m).entries()){distribution.append(flEl('p','profile-muted',mealNames[language][i]+' · '+n(x.kcal)+' kcal · '+n(x.protein)+' g '+flText('protein','proteína')+' · '+n(x.carbs)+' g '+flText('carbohydrates','carbohidratos')));}distribution.append(flEl('small','fl-review-mini-note',flText('Illustrative allocation by scheduled training type; workout times are unavailable. No pre/post-workout timing or fiber/micronutrient adequacy assessment.','Distribución ilustrativa según el entrenamiento previsto; no hay horarios de sesiones. Sin evaluación de horario pre/postentrenamiento ni suficiencia de fibra o micronutrientes.')));
  for(const [i,slot] of mealSlots.entries()){
   const foods=draft.draft.filter(e=>e.slot===slot);if(!foods.length)continue;
   const day=flEl('div','fl-review-draft-day');day.append(flEl('strong','',mealNames[language][i]));
@@ -932,7 +943,7 @@ function renderNutritionModel(){
   details.append(day);
  }
  details.append(flEl('small','fl-review-mini-note',flText('This bounded mathematical fit considers energy and all three macros, but it does not validate serving sizes, micronutrients, allergies or clinical suitability.','Este ajuste matemático limitado considera la energía y los tres macros, pero no valida porciones, micronutrientes, alergias ni idoneidad clínica.')));
- const practical=reviewPracticalFit(draft.base,m,draft);
+ const practical=reviewRedistribute(draft.base,m,reviewPracticalFit(draft.base,m,draft),true);
  const alt=makeCard('🥗',flText('Practical portion alternative','Alternativa práctica de porciones'),flText('Uses foods from the review draft','Usa alimentos del borrador de revisión'),practical?n(practical.totals.kcal)+' kcal':flText('No practical fit','Sin ajuste práctico'),practical?(practical.within?flText('Within 10% of the four test values','Dentro del 10% de los cuatro valores de prueba'):flText('Outside 10% on at least one value','Fuera del 10% en al menos un valor')):flText('Review only','Solo revisión'));
  if(practical){
   addStatGrid(alt,[{value:n(practical.totals.protein)+' g',label:flText('Protein total','Proteína total')},{value:n(practical.totals.carbs)+' g',label:flText('Carb total','Carbohidratos totales')},{value:n(practical.totals.fat)+' g',label:flText('Fat total','Grasa total')}]);
