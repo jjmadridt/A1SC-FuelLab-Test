@@ -326,7 +326,7 @@ h2{margin:0 0 18px;font-size:clamp(22px,4vw,30px)}.cards{display:grid;grid-templ
 .fl-review-mini-note{display:block;font-size:11px;color:#b9cddd;margin-top:8px;overflow-wrap:anywhere}
 @media(max-width:520px){.fl-review-card-head{grid-template-columns:68px minmax(0,1fr);gap:8px}.fl-review-icon{width:68px;height:88px;font-size:32px}.fl-review-stat-grid{grid-template-columns:1fr}.fl-review-card-change{font-size:17px}}
 @media(max-width:370px){#progressContents .fl-training-panel{padding:9px}#progressContents .fl-training-panel .fl-progress-group{padding:6px}#progressContents .fl-progress-card{padding:8px}#progressContents .fl-progress-card-head{grid-template-columns:68px minmax(0,1fr);gap:8px}#progressContents .fl-progress-photo{width:68px;height:88px}#progressContents .fl-progress-card-change{font-size:17px}#progressContents .fl-progress-card-name{font-size:15px}}
-</style><footer>A1SC FUEL LAB · v1.3.31 TEST · 3B.32.2</footer>
+</style><footer>A1SC FUEL LAB · v1.3.32 TEST · 3B.33</footer>
 </main>
 <script>
 let language="en";
@@ -791,7 +791,9 @@ function historicalDuration(x,snapshot,now=new Date()){
  if(rows.length!==1)return null;const r=rows[0],a=r[4][1]/60,b=r[5][1]/60;if(Math.max(a,b)>Math.min(a,b)*1.5)return null;
  const minutes=Math.round((a+b)/2);return minutes>=1&&minutes<=240?{minutes,name:r[1]}:null;
 }
-function reviewSchedule(summary){if(!summary)return null;const saved=reviewLoadRead();return {...summary,days:summary.days.map(day=>({...day,sessions:day.sessions.map(x=>{const v=saved[reviewLoadKey(summary,day,x)];return x.plannedMinutes===null&&Number.isInteger(v)&&v>=1&&v<=1440?{...x,plannedMinutes:v,reviewEstimate:true}:x;})}))};}
+const INTENSITY_REVIEW_KEY='a1sc.fuellab.review-intensity.v1';
+function reviewIntensityRead(){try{const v=JSON.parse(localStorage.getItem(INTENSITY_REVIEW_KEY)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}catch(_){return {};}}
+function reviewSchedule(summary){if(!summary)return null;const saved=reviewLoadRead(),efforts=reviewIntensityRead();return {...summary,days:summary.days.map(day=>({...day,sessions:day.sessions.map(x=>{const key=reviewLoadKey(summary,day,x),v=saved[key],e=efforts[key];let out=x.plannedMinutes===null&&Number.isInteger(v)&&v>=1&&v<=1440?{...x,plannedMinutes:v,reviewEstimate:true}:x;return ['easy','moderate','hard'].includes(e)?{...out,intensity:e,reviewIntensity:true}:out;})}))};}
 function appendDurationEditor(panel,summary,dayIndex){
  if(!summary||!currentTrainingWeek(summary)||schedulePending)return;
  const day=summary.days[dayIndex],missing=day.sessions.filter(x=>x.plannedMinutes===null);if(!missing.length)return;
@@ -800,6 +802,15 @@ function appendDurationEditor(panel,summary,dayIndex){
  const message=flEl('p','profile-muted','');row.append(flBtn(flText('Save estimate','Guardar estimación'),()=>{const n=Number(input.value);if(!Number.isInteger(n)||n<1||n>1440){message.textContent=flText('Enter 1–1440 whole minutes.','Indica 1–1440 minutos enteros.');return;}try{const data=reviewLoadRead();data[key]=n;localStorage.setItem(LOAD_REVIEW_KEY,JSON.stringify(data));renderNutritionModel();}catch(_){message.textContent=flText('Could not save estimate.','No se pudo guardar.');}}));if(Number.isInteger(saved[key]))row.append(flBtn(flText('Clear estimate','Borrar estimación'),()=>{try{const data=reviewLoadRead();delete data[key];localStorage.setItem(LOAD_REVIEW_KEY,JSON.stringify(data));renderNutritionModel();}catch(_){message.textContent=flText('Could not clear estimate.','No se pudo borrar.');}}));row.append(message);box.append(row);}panel.append(box);
 }
 
+function appendIntensityEditor(panel,summary,dayIndex){
+ if(!summary||!currentTrainingWeek(summary)||schedulePending)return;
+ const day=summary.days[dayIndex];if(!day.sessions.length)return;
+ const box=flEl('details','fl-progress-group');box.append(flEl('summary','',flText('Training intensity','Intensidad del entrenamiento')));box.append(flEl('p','profile-muted',flText('Estimated whole-session effort. Local review only.','Esfuerzo estimado de toda la sesión. Solo revisión local.')));
+ const saved=reviewIntensityRead(),names={strength:flText('Total Body','Cuerpo completo'),cycle:flText('Cycle','Ciclismo'),run:flText('Run','Carrera'),swim:flText('Swim','Natación'),triathlon:flText('Triathlon','Triatlón')};
+ for(const x of day.sessions){const key=reviewLoadKey(summary,day,x),label=flEl('label','',names[x.discipline]),select=document.createElement('select');select.style.cssText='display:block;width:100%;box-sizing:border-box;margin:6px 0 12px;background:#10253b;color:white;border:1px solid #345b7d;border-radius:10px;padding:10px';
+ for(const [v,t] of [['',flText('Use TRAIN LAB value','Usar valor de TRAIN LAB')],['easy',flText('Easy','Suave')],['moderate',flText('Moderate','Moderada')],['hard',flText('Hard','Intensa')]]){const o=document.createElement('option');o.value=v;o.textContent=t;select.append(o);}select.value=['easy','moderate','hard'].includes(saved[key])?saved[key]:'';label.append(select);box.append(label);const message=flEl('p','profile-muted',flText('TRAIN LAB: ','TRAIN LAB: ')+({unknown:flText('Unknown','Desconocida'),easy:flText('Easy','Suave'),moderate:flText('Moderate','Moderada'),hard:flText('Hard','Intensa')})[x.intensity]);box.append(message);select.onchange=()=>{try{const data=reviewIntensityRead();if(select.value)data[key]=select.value;else delete data[key];localStorage.setItem(INTENSITY_REVIEW_KEY,JSON.stringify(data));renderNutritionModel();document.querySelector('#nutritionModelContents .fl-intensity-editor').open=true;}catch(_){message.textContent=flText('Could not save intensity.','No se pudo guardar la intensidad.');}};}
+ box.classList.add('fl-intensity-editor');panel.append(box);
+}
 function renderNutritionModel(){
  const panel=document.getElementById('nutritionModelContents');if(!panel)return;panel.replaceChildren();
  const add=(tag,txt,cls='')=>panel.append(flEl(tag,cls,txt));
@@ -807,10 +818,10 @@ function renderNutritionModel(){
  add('p',flText('For professional review only. Estimates and drafts are unvalidated, not intake targets. Nothing here changes saved meals.','Solo revisión profesional. Las estimaciones y borradores no están validados ni son metas de ingesta. No cambian las comidas guardadas.'),'profile-muted');
  const summary=schedulePending?null:reviewSchedule(confirmedTrainingSummary),m=reviewNutritionModel(bodyRecord.value,safetyState(),summary,selectedGoal||'general',weekDay);const n=x=>Math.round(x).toLocaleString(language==='es'?'es-MX':'en-US');
  if(m.rmr===undefined){add('p',m.status==='profile'?flText('Complete daily activity and physiological reference in About me.','Completa la actividad diaria y referencia fisiológica en Sobre mí.'):flText('Complete screening and seek professional review if needed. Model limited to ages 19–78.','Completa la evaluación y busca revisión profesional si corresponde. Modelo limitado a edades de 19 a 78 años.'));return;}
- appendDurationEditor(panel,confirmedTrainingSummary,weekDay);if(summary?.days[weekDay]?.sessions.some(x=>x.reviewEstimate))add('p',flText('Includes local duration estimates, not measured training.','Incluye estimaciones locales de duración, no entrenamiento medido.'),'profile-muted');appendReviewContext(panel);
+ appendDurationEditor(panel,confirmedTrainingSummary,weekDay);appendIntensityEditor(panel,confirmedTrainingSummary,weekDay);if(summary?.days[weekDay]?.sessions.some(x=>x.reviewEstimate))add('p',flText('Includes local duration estimates, not measured training.','Incluye estimaciones locales de duración, no entrenamiento medido.'),'profile-muted');if(summary?.days[weekDay]?.sessions.some(x=>x.reviewIntensity))add('p',flText('Includes local intensity estimates, not measured effort.','Incluye estimaciones locales de intensidad, no esfuerzo medido.'),'profile-muted');appendReviewContext(panel);
  const makeCard=(icon,title,context,headline,metric)=>{const card=flEl('article','fl-review-card');const head=flEl('div','fl-review-card-head');const art=flEl('div','fl-review-icon',icon);art.setAttribute('aria-hidden','true');head.append(art);const text=flEl('div','');text.append(flEl('strong','fl-review-card-name',title));if(context)text.append(flEl('small','fl-review-card-context',context));if(headline)text.append(flEl('strong','fl-review-card-change',headline));if(metric)text.append(flEl('small','fl-review-card-metric',metric));head.append(text);card.append(head);panel.append(card);return card;};
  const addStatGrid=(card,items)=>{const grid=flEl('div','fl-review-stat-grid');for(const item of items){const box=flEl('div','fl-review-stat');box.append(flEl('strong','',item.value));box.append(flEl('span','',item.label+(item.sub?' · '+item.sub:'')));grid.append(box);}card.append(grid);return grid;};
- const addBars=(card,items,max)=>{const wrap=flEl('div','fl-review-bars');for(const item of items){const line=flEl('div','');const cap=flEl('div','fl-review-bar-caption');cap.append(flEl('span','',item.label));cap.append(flEl('strong','',item.value));line.append(cap);const track=flEl('div','fl-review-bar-track');track.setAttribute('aria-hidden','true');const fill=flEl('div','fl-review-bar-fill');fill.style.width=(max>0?Math.max(4,100*item.amount/max):0)+'%';track.append(fill);line.append(track);wrap.append(line);}card.append(wrap);return wrap;};
+ const addBars=(card,items,max)=>{const wrap=flEl('div','fl-review-bars');for(const item of items){const line=flEl('div','');const cap=flEl('div','fl-review-bar-caption');cap.append(flEl('span','',item.label));cap.append(flEl('strong','',item.value));line.append(cap);const track=flEl('div','fl-review-bar-track');track.setAttribute('aria-hidden','true');const fill=flEl('div','fl-review-bar-fill');fill.style.width=(max>0?Math.max(0,100*item.amount/max):0)+'%';track.append(fill);line.append(track);wrap.append(line);}card.append(wrap);return wrap;};
  const addDetails=(card,title)=>{const d=flEl('details','fl-review-card-more');d.append(flEl('summary','',title));card.append(d);return d;};
  if(m.status!=='complete'){
   const msg=schedulePending?flText('A new schedule awaits confirmation. Open Training schedule and choose Use this schedule.','Hay un programa pendiente. Abre Programa de entrenamiento y elige Usar este programa.'):m.status==='duration'?flText('Planned duration is still missing for one or more scheduled disciplines. Enter a review estimate above or set planned duration in TRAIN LAB.','Falta la duración prevista de una o más disciplinas programadas. Indica una estimación arriba o configura la duración prevista en TRAIN LAB.'):m.status==='limit'?flText('More than 240 minutes are planned. Long endurance fueling needs separate professional review, so no daily draft is shown yet.','Hay más de 240 minutos programados. La nutrición de resistencia prolongada requiere revisión profesional aparte, así que todavía no se muestra un borrador diario.'):m.status==='stale'?flText('Receive the current training week to estimate this day.','Recibe la semana actual de entrenamiento para estimar este día.'):m.status==='review'?flText('The calculation is outside this review model’s limits.','El cálculo está fuera de los límites de este modelo de revisión.'):flText('No confirmed current training schedule. Open FUEL LAB from TRAIN LAB, then confirm the received week.','No hay un programa actual confirmado. Abre FUEL LAB desde TRAIN LAB y luego confirma la semana recibida.');
@@ -828,7 +839,11 @@ function renderNutritionModel(){
   {value:m.rest?flText('Rest day','Día de descanso'):n(m.minutes)+' min',label:flText('Planned training','Entrenamiento previsto')}
  ]);
  if(m.uncertain)energyCard.append(flEl('small','fl-review-mini-note',flText('Intensity is not recorded. This review uses a broad easy-to-hard range rather than a measured effort.','La intensidad no está registrada. Esta revisión usa un rango amplio de suave a intenso en lugar de un esfuerzo medido.')));
- const macroCard=makeCard('🍽️',flText('Macro test scenario','Escenario de prueba de macros'),flText('Review only · not applied to meals','Solo revisión · no se aplica a las comidas'),n(m.protein)+'P · '+n(m.carbs)+'C · '+n(m.fat)+'F',flText('Protein · carbohydrate · fat','Proteína · carbohidratos · grasa'));
+ const current=weekTotals(weekPlan[weekDay]);
+ const comparison=makeCard('📊',flText('Meal plan comparison','Comparación del menú'),flText('Review scenario vs saved meals','Escenario de revisión frente al menú guardado'),'','');
+ addBars(comparison,[{label:flText('Saved meal total','Total del menú guardado'),value:n(current.kcal)+' kcal',amount:current.kcal},{label:flText('Model midpoint','Punto medio del modelo'),value:n(m.energy)+' kcal',amount:m.energy}],Math.max(current.kcal,m.energy,1));
+ comparison.append(flEl('small','fl-review-mini-note',flText('Model minus saved meals: ','Modelo menos menú guardado: ')+(m.energy-current.kcal>0?'+':'')+n(m.energy-current.kcal)+' kcal · '+flText('Not a prescribed intake or deficit.','No es una ingesta ni un déficit prescrito.')));
+ const macroCard=makeCard('🍽️',flText('Macro test scenario','Escenario de prueba de macros'),flText('Review only · not applied to meals','Solo revisión · no se aplica a las comidas'),'', '');
  addBars(macroCard,[
   {label:flText('Protein','Proteína'),value:n(m.protein)+' g',amount:m.protein},
   {label:flText('Carbohydrate','Carbohidratos'),value:n(m.carbs)+' g',amount:m.carbs},
@@ -838,7 +853,7 @@ function renderNutritionModel(){
  const draft=reviewMacroFit(weekPlan[weekDay],m);
  if(!draft){
   const card=makeCard('📝',flText('Draft meal fit','Ajuste preliminar de comidas'),flText('No meal changes have been applied','No se han aplicado cambios a las comidas'),flText('Draft unavailable','Borrador no disponible'),flText('No draft portions available yet','Aún no hay porciones preliminares'));
-  card.append(flEl('small','fl-review-mini-note',flText('No sample meals or the required scaling exceeds current review limits.','No hay comidas de ejemplo o el ajuste requerido excede los límites de revisión.')));
+  card.append(flEl('small','fl-review-mini-note',!weekPlan[weekDay].length?flText('No saved foods for this day.','No hay alimentos guardados para este día.'):current.kcal>0&&(m.energy/current.kcal>2||m.energy/current.kcal<.5)?flText('The current menu would require scaling beyond 0.5–2 times its original energy. Adding foods is not yet supported by this review optimizer.','El menú requiere un ajuste fuera de 0.5–2 veces su energía original. Este optimizador aún no agrega alimentos.'):flText('No valid draft within current review limits.','No hay un borrador válido dentro de los límites de revisión.')));
   return;
  }
  const diffK=Math.round(draft.totals.kcal-m.energy),diffP=Math.round(draft.totals.protein-m.protein),diffC=Math.round(draft.totals.carbs-m.carbs),diffF=Math.round(draft.totals.fat-m.fat);
@@ -848,7 +863,7 @@ function renderNutritionModel(){
   {value:n(draft.totals.carbs)+' g',label:flText('Carb total','Carbohidratos totales')},
   {value:n(draft.totals.fat)+' g',label:flText('Fat total','Grasa total')}
  ]);
- draftCard.append(flEl('small','fl-review-mini-note',flText('Difference from the test scenario: ','Diferencia respecto al escenario de prueba: ')+diffK+' kcal · '+diffP+' g P · '+diffC+' g C · '+diffF+' g F'));
+ draftCard.append(flEl('small','fl-review-mini-note',flText('Difference from the test scenario: ','Diferencia respecto al escenario de prueba: ')+diffK+' kcal · '+diffP+' g '+flText('protein','proteína')+' · '+diffC+' g '+flText('carbs','carbohidratos')+' · '+diffF+' g '+flText('fat','grasa')));
  const details=addDetails(draftCard,flText('View meal-by-meal draft','Ver borrador por comida'));
  for(const [i,slot] of mealSlots.entries()){
   const foods=draft.draft.filter(e=>e.slot===slot);if(!foods.length)continue;
