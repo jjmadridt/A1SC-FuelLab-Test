@@ -1,5 +1,5 @@
 // Fuel Lab: explicit update approval, fresh navigation and version-scoped fallback.
-const CACHE = 'fuel-lab-pwa-v177-usda-reference';
+const CACHE = 'fuel-lab-pwa-v178-daily-nutrient-review';
 const ASSETS = ['./icon-192.png','./icon-512.png','./manifest.webmanifest'];
 const PAGE = new URL('./index.html',self.registration.scope).href;
 self.addEventListener('install',event => {event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(asset=>new Request(asset,{cache:'reload'})))));});
